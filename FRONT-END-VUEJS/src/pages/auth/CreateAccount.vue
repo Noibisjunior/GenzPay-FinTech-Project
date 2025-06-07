@@ -14,6 +14,8 @@ const email = ref("");
 const phoneNumber = ref("");
 const password = ref("");
 const confirmPassword = ref("");
+const accountType = ref("savings"); 
+const errorMessage = ref("");
 
 const createAccount = async () => {
   try {
@@ -24,7 +26,7 @@ const createAccount = async () => {
         email: email.value,
         password: password.value,
         confirmPassword: confirmPassword.value,
-        accountType: "savings",
+        accountType: accountType.value,
         phone: phoneNumber.value,
       },
       {
@@ -37,9 +39,19 @@ const createAccount = async () => {
       router.push("/verify-link");
     }
   } catch (error: any) {
-    console.error("Registration error:", error.response?.data || error.message);
+    if (error.response?.data?.msg) {
+  errorMessage.value = error.response.data.msg;
+} else if (error.response?.data?.message) {
+  errorMessage.value = error.response.data.message;
+} else {
+  errorMessage.value = "An unexpected error occurred. Please try again.";
+}
+
   }
 };
+
+
+
 </script>
 
 
@@ -63,6 +75,19 @@ const createAccount = async () => {
         <Input id="email" v-model="email" type="email" placeholder="Enter your email dddress" required />
       </div>
       <div class="grid gap-2">
+  <Label for="account-type">Account Type*</Label>
+  <select 
+    id="account-type" 
+    v-model="accountType" 
+    class="border rounded px-3 py-2"
+    required
+  >
+    <option value="savings">Savings</option>
+    <option value="current">Current</option>
+    <option value="investment">Investment</option>
+  </select>
+</div>
+      <div class="grid gap-2">
         <Label for="password">Password*</Label>
         <Input id="password"  v-model="password" type="password" placeholder="Create a password" required />
       </div>
@@ -74,10 +99,13 @@ const createAccount = async () => {
     <span class="inline-block text-sm mb-5">
       *Must be at least 8 characters
     </span>
+    <div v-if="errorMessage" class="text-red-500 text-sm mb-4">
+  {{ errorMessage }}
+</div>
     <div class="text-center text-sm mb-14 md:mb-0">
       <Button 
         @click="createAccount" 
-        type="submit" 
+        type="submit"
         class="w-full"
       > 
         Create account 

@@ -5,68 +5,76 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const sendVerificationEmail = require('../Services/emailService');
+const generateVerificationCode= require('../utils/verificationCode');
 
 async function register(req, res) {
   const { email, username, password, confirmPassword, accountType } = req.body;
 
-  // Check if all fields are provided
+  // Validate input
   if (!email || !username || !password || !confirmPassword || !accountType) {
-    return res.status(400).json({
-      msg: 'Please provide all the required information',
-    });
+    return res.status(400).json({ msg: 'Please provide all the required information' });
   }
 
-  // Check if passwords match
   if (password !== confirmPassword) {
-    return res.status(400).json({
-      msg: 'Passwords do not match',
-    });
+    return res.status(400).json({ msg: 'Passwords do not match' });
   }
 
-  // Check if the user already exists (by email OR username)
-  const user = await Auth.findOne({
-    $or: [{ email }, { username }],
-  });
-
-  if (user) {
+  const existingUser = await Auth.findOne({ $or: [{ email }, { username }] });
+  if (existingUser) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  // Hash the password before saving it to the database
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  try {
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-  // Create a new user
-  const newUser = await Auth.create({
-    email: email.trim().toLowerCase(),
-    accountType,
-    username,
-    password: hashedPassword,
-  });
+    // Generate verification code
+    const verificationCode = generateVerificationCode();
 
-  console.log('New user created:', newUser); // For debugging
+    // Create user with verificationCode saved
+    const newUser = await Auth.create({
+      email: email.trim().toLowerCase(),
+      accountType,
+      username,
+      password: hashedPassword,
+      verificationCode, // save the code so you can verify later
+      isVerified: false // optional, if you want to track email verification status
+    });
 
-  // Create a JWT token
-  const token = JWT.sign(
-    { userId: newUser._id },
-    process.env.JWT_SECRET,
-    { expiresIn: '1d' }
-  );
+    console.log('New user created:', newUser);
 
-  // Send token as a cookie
-  res.cookie('token', token, { secure: false, httpOnly: true });
-  return res.status(200).json({
-    status: 200,
-    message: 'Register successful',
-    data: {
-      token: token,
-      user: {
-        email: newUser.email,
-        username: newUser.username,
-        accountType: newUser.accountType,
+    // Send verification email
+    await sendVerificationEmail(email, verificationCode);
+
+    // Create JWT token
+    const token = JWT.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    // Set cookie with token
+    res.cookie('token', token, { secure: false, httpOnly: true });
+
+    return res.status(201).json({
+      status: 'success',
+      message: 'User registered and verification email sent!',
+      data: {
+        token,
+        user: {
+          email: newUser.email,
+          username: newUser.username,
+          accountType: newUser.accountType,
+        },
       },
-    },
-  });
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    return res.status(500).json({ status: 'error', message: 'Registration failed.' });
+  }
 }
 
 
