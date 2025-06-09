@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import AuthLayout from "@/pages/auth/layout/AuthLayout.vue";
 import router from "@/router";
@@ -17,7 +17,7 @@ const enterCode = () => {
     :showLogo="false"
   >
     <template v-slot:image>
-      <!-- content for the header slot -->
+      <!-- content for the header slot 
       <svg class="mx-auto" width="66" height="66" viewBox="0 0 66 66" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="5" y="5" width="56" height="56" rx="28" fill="#F4EBFF"/>
       <rect x="5" y="5" width="56" height="56" rx="28" stroke="#F9F5FF" stroke-width="10"/>
@@ -39,4 +39,4 @@ const enterCode = () => {
       </RouterLink>
     </div>
   </AuthLayout>
-</template>
+</template> -->

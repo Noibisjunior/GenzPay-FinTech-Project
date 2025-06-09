@@ -1,66 +1,81 @@
 const Auth = require('../models/auth');
-const argon2 = require('argon2');
-const JWT = require('jsonwebtoken');
-const crypto = require('crypto');
+const Otps = require('../models/otpModel');
 const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
+const JWT = require('jsonwebtoken');
+const randomstring = require('randomstring');
+const sendEmail = require('../Services/emailService');
 require('dotenv').config();
-const sendVerificationEmail = require('../Services/emailService');
-const generateVerificationCode= require('../utils/verificationCode');
+
+function generateOTP() {
+  return randomstring.generate({
+    length: 6,
+    charset: 'numeric',
+  });
+}
 
 async function register(req, res) {
   const { email, username, password, confirmPassword, accountType } = req.body;
 
   // Validate input
   if (!email || !username || !password || !confirmPassword || !accountType) {
-    return res.status(400).json({ msg: 'Please provide all the required information' });
+    return res.status(400).json({ status: 'error', message: 'Please provide all the required information.' });
   }
 
   if (password !== confirmPassword) {
-    return res.status(400).json({ msg: 'Passwords do not match' });
-  }
-
-  const existingUser = await Auth.findOne({ $or: [{ email }, { username }] });
-  if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
+    return res.status(400).json({ status: 'error', message: 'Passwords do not match.' });
   }
 
   try {
+    // Check if user exists
+    const existingUser = await Auth.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ status: 'error', message: 'User with this email or username already exists.' });
+    }
+
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate verification code
-    const verificationCode = generateVerificationCode();
-
-    // Create user with verificationCode saved
+    // Create new user (initially unverified)
     const newUser = await Auth.create({
       email: email.trim().toLowerCase(),
-      accountType,
       username,
+      accountType,
       password: hashedPassword,
-      verificationCode, // save the code so you can verify later
-      isVerified: false // optional, if you want to track email verification status
+      isVerified: false, // assuming you have this field
     });
 
     console.log('New user created:', newUser);
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationCode);
+    // Generate OTP and save
+    const otp = generateOTP();
+    await Otps.create({ email, otp });
 
-    // Create JWT token
-    const token = JWT.sign(
-      { userId: newUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+    // Send verification email with OTP
+    await sendEmail({
+      to: email,
+      subject: 'Verify Your Email',
+      message: `
+        <h3>Welcome, ${username}!</h3>
+        <p>Your OTP for email verification is:</p>
+        <h2 style="color:#6366F1;">${otp}</h2>
+        <p>This OTP is valid for a short time.</p>
+        <br/>
+        <p>Thanks,<br/>The FintechApp Team</p>
+      `,
+    });
+
+    // Generate JWT token
+    const token = JWT.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
 
     // Set cookie with token
     res.cookie('token', token, { secure: false, httpOnly: true });
 
-    return res.status(201).json({
+    return res.status(200).json({
       status: 'success',
-      message: 'User registered and verification email sent!',
+      message: 'User registered successfully. An OTP has been sent to your email for verification.',
       data: {
         token,
         user: {
@@ -70,15 +85,11 @@ async function register(req, res) {
         },
       },
     });
-
   } catch (error) {
     console.error('Registration error:', error);
     return res.status(500).json({ status: 'error', message: 'Registration failed.' });
   }
 }
-
-
-
 
 
 // Login function

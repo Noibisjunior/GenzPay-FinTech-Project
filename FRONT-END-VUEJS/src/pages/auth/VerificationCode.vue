@@ -1,4 +1,42 @@
-<script setup lang="ts">
+<script setup>
+import { ref } from 'vue'
+import axios from 'axios'
+import router from '@/router'
+
+const email = ref('') // prefill with registered email if you can
+const otp = ref('')
+const message = ref('')
+
+const verifyCode = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8009/api/verify-otp`, {
+      params: { email: email.value, otp: otp.value }
+    })
+
+    message.value = response.data.message
+    router.push('/dashboard') 
+  } catch (error) {
+    message.value = error.response.data || 'Something went wrong'
+  }
+}
+</script>
+
+<template>
+  <div class="max-w-md mx-auto">
+    <h2 class="text-xl font-bold mb-4">Enter your OTP</h2>
+    <input v-model="email" type="email" placeholder="Your email" class="border p-2 mb-4 w-full" />
+    <input v-model="otp" type="text" placeholder="Enter OTP" class="border p-2 mb-4 w-full" />
+    <button @click="verifyCode" class="bg-purple-600 text-white px-4 py-2">Verify</button>
+    <p class="mt-2 text-red-500">{{ message }}</p>
+  </div>
+</template>
+
+
+
+
+
+
+<!-- <script setup lang="ts">
 import { Button } from "@/components/ui/button";
 import AuthLayout from "@/pages/auth/layout/AuthLayout.vue";
 import { ArrowLeftIcon } from '@radix-icons/vue'
@@ -26,7 +64,7 @@ const verifyCode = () => {
     :showLogo="false"
   >
     <template v-slot:image>
-      <!-- content for the header slot -->
+      content for the header slot 
       <svg class="mx-auto" width="66" height="66" viewBox="0 0 66 66" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="5" y="5" width="56" height="56" rx="28" fill="#D1FADF"/>
 <rect x="5" y="5" width="56" height="56" rx="28" stroke="#ECFDF3" stroke-width="10"/>
@@ -73,4 +111,4 @@ const verifyCode = () => {
       </RouterLink>
     </div>
   </AuthLayout>
-</template>
+</template> -->

@@ -1,36 +1,24 @@
-const nodemailer = require("nodemailer");
+const nodeMailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: "8f15e4001@smtp-brevo.com",
-    pass: "bFtJ7UvqZSzTOm3E",
-  },
-});
+const sendEmail = async (options) => {
+  const transporter = nodeMailer.createTransport({
+    host: process.env.SMPT_HOST,
+    port: process.env.SMPT_PORT,
+    secure: false, // Use TLS (not SSL), port 587
+    auth: {
+      user: process.env.SMPT_MAIL,
+      pass: process.env.SMPT_APP_PASS,
+    },
+  });
 
-async function sendVerificationEmail(toEmail, verificationCode) {
-  try {
-    const info = await transporter.sendMail({
-      from: '"FintechApp" <no-reply@fintechapp.test>', // use consistent dummy sender
-      to: toEmail,
-      subject: "Verify Your Email Address",
-      html: `
-        <h3>Hello!</h3>
-        <p>Your verification code is:</p>
-        <h2 style="color:#6366F1;">${verificationCode}</h2>
-        <p>Enter this code on the website-app to verify your email.</p>
-        <br />
-        <p>Thanks,<br>The FintechApp Team</p>
-      `,
-    });
+  const mailOptions = {
+    from: `FintechApp <${process.env.SMPT_MAIL}>`,
+    to: options.to,
+    subject: options.subject,
+    html: options.message,
+  };
 
-    console.log("Email sent: %s", info.messageId);
-  } catch (error) {
-    console.error("Failed to send email:", error);
-    throw error;
-  }
-}
+  await transporter.sendMail(mailOptions);
+};
 
-module.exports = sendVerificationEmail;
+module.exports = sendEmail;

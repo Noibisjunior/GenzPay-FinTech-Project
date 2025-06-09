@@ -36,7 +36,7 @@ const createAccount = async () => {
 
     if (res.status === 200) {
       // show a toast notification here
-      router.push("/verify-link");
+      router.push("/verify-code");
     }
   } catch (error: any) {
     if (error.response?.data?.msg) {

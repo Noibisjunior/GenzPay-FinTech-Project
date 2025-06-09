@@ -45,7 +45,7 @@ const {  getNotificationCount  } = require('../controller/notification.js');
 const {  getNotificationById } = require('../controller/notification.js');
 const {  updateNotificationStatus } = require('../controller/notification.js');
 const {  deleteNotification } = require('../controller/notification.js');
-
+const {verifyOTP} = require('../controller/verifyOTP.js')
 
 
 
@@ -95,6 +95,7 @@ router.route('/api/users/:id').get(verifyToken, editUserProfile );
 router.route('/api/beneficiaries/').get(verifyToken, searchBeneficiaries );
 router.route('/api/notifications/count').get(verifyToken, getNotificationCount );
 router.route('/api/notifications/:id').get(verifyToken, getNotificationById );
+router.route('/api/verify-otp').get(verifyOTP);
 
 
 

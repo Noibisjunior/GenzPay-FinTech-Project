@@ -29,11 +29,11 @@ type: String,
   },
   address:{
     type: String,
-    // required: [true, 'Address is required'],
+ 
   },
   phoneNumber:{
     type: String,
-    // required: [true, 'Phone number is required'],
+
   },
   username: {
     type: String,
@@ -43,6 +43,10 @@ type: String,
   password: {
     type: String,
     required: true,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   },
   confirmPassword: {
     type: String,
