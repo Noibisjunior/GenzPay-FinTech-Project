@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import router from '@/router'
 
-const email = ref('') // prefill with registered email if you can
+const email = ref('') 
 const otp = ref('')
 const message = ref('')
 
