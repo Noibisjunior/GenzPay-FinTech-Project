@@ -45,7 +45,7 @@ const {  getNotificationCount  } = require('../controller/notification.js');
 const {  getNotificationById } = require('../controller/notification.js');
 const {  updateNotificationStatus } = require('../controller/notification.js');
 const {  deleteNotification } = require('../controller/notification.js');
-const {verifyOTP} = require('../controller/verifyOTP.js')
+const {verifyOTP,resendOTP} = require('../controller/verifyOTP.js')
 
 
 
@@ -66,8 +66,7 @@ router.route('/api/wallets/withdraw').post();
 router.route('/api/users/:id/beneficiaries').post(verifyToken,addBeneficiary);
 router.route('/api/users/2fa').post(verifyToken, activate2FA);
 router.route('/api/verification').post(verifyToken, verifyUser);
-
-
+router.route('/api/resend-otp').post(resendOTP)
 
 // Creating GET routes
 router.route('/api/users/balances').get(verifyToken,getUserBalances);
