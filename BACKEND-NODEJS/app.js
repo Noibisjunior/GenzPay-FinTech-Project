@@ -21,8 +21,3 @@ app.use(cookieParser());
 
 
 module.exports = app;
-// app.get('/',(req,res)=>{
-//   res.sendFile(path.join(__dirname,'..','public','index.html'));//to serve the frontend on first page load
-// })
-
-
