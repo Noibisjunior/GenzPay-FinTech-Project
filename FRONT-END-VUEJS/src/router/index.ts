@@ -7,7 +7,7 @@ const routes = [
   { path: '/', component: Login },
   { path: '/signup', component: CreateAccount },
   { path: '/forgot-password', component: () => import('@/pages/auth/forgotPassword.vue') },
-  { path: '/reset-password', component: () => import('@/pages/auth/resetPassword.vue') },
+  { path: '/reset-password/:token', component: () => import('@/pages/auth/resetPassword.vue') },
   { path: '/verify-code', component: () => import('@/pages/auth/VerificationCode.vue') },
   {
     path: '/dashboard',

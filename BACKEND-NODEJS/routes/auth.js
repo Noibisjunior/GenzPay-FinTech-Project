@@ -50,7 +50,7 @@ const {verifyOTP,resendOTP} = require('../controller/verifyOTP.js')
 
 
 
-// Creating POST routes
+// Creating POST routes 
 router.route('/api/auth/register').post(register);
 router.route('/api/auth/login').post(login);
 router.route('/api/auth/forgot-password').post(forgotPassword);

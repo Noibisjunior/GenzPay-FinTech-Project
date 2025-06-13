@@ -1,9 +1,12 @@
 const Auth = require('../models/auth');
 const Otps = require('../models/otpModel');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const argon2 = require('argon2');
 const JWT = require('jsonwebtoken');
 const randomstring = require('randomstring');
 const sendEmail = require('../Services/emailService');
+const nodeMailer = require("nodemailer");
 require('dotenv').config();
 
 function generateOTP() {
@@ -144,55 +147,49 @@ async function register(req, res) {
   }
 }
 
-    async function forgotPassword (req, res)  {
-        const { email } = req.body;
+
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+
+    const user = await Auth.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'No user found with that email' });
+    }
+
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false })
     
-        
-        const user = await Auth.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'No user found with that email' });
-        }
-    
-     //Generating a reset token
-        const resetToken = user.createPasswordResetToken();
-    
-        await user.save({ validateBeforeSave: false });
-    
-        //  Sending the reset token to the user's email (URL should be front-end based)
-        const resetURL = `${req.protocol}://${req.get('host')}/api/auth/reset-password/${resetToken}`;
-    
-        try {
-            
-            const transporter = nodemailer.createTransport({
-                service: 'Gmail', 
-                auth: {
-                    user: process.env.EMAIL_USERNAME,
-                    pass: process.env.EMAIL_PASSWORD
-                }
-            });
-    
-            const mailOptions = {
-                to: user.email,
-                from: process.env.EMAIL_USERNAME,
-                subject: 'Password Reset',
-                html: `<p>You requested a password reset. Click this <a href="${resetURL}">link</a> to reset your password.</p>`
-            };
-    
-            await transporter.sendMail(mailOptions);
-    
-            res.status(200).json({ message: 'Password reset link sent to your email' });
-        } catch (error) {
-            // Reset token if email sending fails
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpires = undefined;
-            await user.save({ validateBeforeSave: false });
-    
-            return res.status(500).json({ message: 'Error sending the email. Try again later.' });
-        }
+    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;  // check for deployed frontend URL
+
+    console.log('Generated Reset URL:', resetURL);
+
+    const transporter = nodeMailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL_USERNAME, 
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+
+    const mailOptions = {
+      to: user.email,
+      from: process.env.EMAIL_USERNAME,
+      subject: 'Password Reset',
+      html: `<p>You requested a password reset. Click this <a href="${resetURL}">link</a> to reset your password.</p>`
     };
 
+    await transporter.sendMail(mailOptions);
 
-    // POST: Reset password
+    res.status(200).json({ message: 'Password reset link sent to your email' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+
+    res.status(500).json({ message: 'Error sending the email. Try again later.' });
+  }
+}
+
+   // POST: Reset password
     async function resetPassword (req, res)  {
         const { tokens } = req.params;
         const { password, confirmPassword } = req.body;

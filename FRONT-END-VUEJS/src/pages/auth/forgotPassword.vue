@@ -38,7 +38,7 @@ const handleForgotPassword = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post('/api/auth/forgot-password', { email: email.value })
+    const response = await axios.post('http://localhost:8009/api/auth/forgot-password', { email: email.value })
     message.value = response.data.message
     isSuccess.value = true
   } catch (error) {

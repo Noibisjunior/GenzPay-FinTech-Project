@@ -111,5 +111,9 @@ const createAccount = async () => {
         Create account 
       </Button>
     </div>
+    <RouterLink to="/" class="flex items-center justify-center gap-2 font-semibold">
+          Alredy have an account, Go to Login
+          <ArrowRightIcon class="h-12 stroke-gray-800" />
+        </RouterLink>
   </AuthLayout>
 </template>

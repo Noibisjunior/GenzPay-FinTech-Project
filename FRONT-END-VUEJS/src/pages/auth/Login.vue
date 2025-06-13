@@ -49,7 +49,7 @@ const onLogin = () => {
           :disabled="!loginData.email || !loginData.password"
         > Login </Button>
         <RouterLink to="/signup" class="flex items-center justify-center gap-2 font-semibold">
-          Go to Sign up
+          Dont have an account, Go to Sign up
           <ArrowRightIcon class="h-12 stroke-gray-800" />
         </RouterLink>
       </div>

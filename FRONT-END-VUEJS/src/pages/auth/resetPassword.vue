@@ -62,7 +62,7 @@ const handleResetPassword = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post(`/api/auth/reset-password/${token}`, {
+    const response = await axios.post(`http://localhost:8009/api/auth/reset-password/${token}`, {
       password: password.value,
       confirmPassword: confirmPassword.value,
     })
@@ -71,7 +71,7 @@ const handleResetPassword = async () => {
     isSuccess.value = true
 
     setTimeout(() => {
-      router.push('/login')
+      router.push('/')
     }, 2000)
   } catch (error) {
     message.value =
