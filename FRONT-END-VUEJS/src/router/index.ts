@@ -6,8 +6,8 @@ import CreateAccount from '@/pages/auth/CreateAccount.vue'
 const routes = [
   { path: '/', component: Login },
   { path: '/signup', component: CreateAccount },
-  { path: '/verify-link', component: () => import('@/pages/auth/VerificationLink.vue') },
-  { path: '/verified', component: () => import('@/pages/auth/MailVerified.vue') },
+  { path: '/forgot-password', component: () => import('@/pages/auth/forgotPassword.vue') },
+  { path: '/reset-password', component: () => import('@/pages/auth/resetPassword.vue') },
   { path: '/verify-code', component: () => import('@/pages/auth/VerificationCode.vue') },
   {
     path: '/dashboard',
