@@ -30,12 +30,12 @@ const createAccount = async () => {
         phone: phoneNumber.value,
       },
       {
-        withCredentials: true, // important for sending cookies!
+        withCredentials: true, 
       }
     );
 
     if (res.status === 200) {
-      // show a toast notification here
+      // notification here
       router.push("/verify-code");
     }
   } catch (error: any) {
