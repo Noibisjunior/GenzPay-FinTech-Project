@@ -1,4 +1,108 @@
-<script lang="ts" setup>
+<template>
+  <div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow">
+    <h2 class="text-xl font-semibold mb-4">Create New Invoice</h2>
+
+    <form @submit.prevent="submitInvoice">
+        <div class="mb-3">
+        <label class="block font-medium">Customer Name</label>
+        <input v-model="form.customer" class="border rounded p-2 w-full" required />
+      </div>
+
+      <div class="mb-3">
+        <label class="block font-medium">Currency</label>
+        <input v-model="form.currency" class="border rounded p-2 w-full" required />
+      </div>
+
+       <div class="mb-3">
+         <label class="block font-medium">Issue Date</label>
+        <input type="date" v-model="form.issueDate" class="border rounded p-2 w-full" required />
+       </div>
+  
+      <div class="mb-3">
+        <label class="block font-medium">Due Date</label>
+        <input type="date" v-model="form.dueDate" class="border rounded p-2 w-full" required />
+      </div>
+
+      <div class="mb-3">
+        <label class="block font-medium">Items</label>
+         <div v-for="(item, index) in form.items" :key="index" class="flex gap-2 mb-2">
+          <input v-model="item.description" placeholder="Description" class="border p-2 flex-1" required />
+          <input v-model.number="item.amount" placeholder="Amount" type="number" class="border p-2 w-24" required />
+           <button type="button" @click="removeItem(index)" class="text-red-500">x</button>
+        </div>
+        <button type="button" @click="addItem" class="text-blue-500">+ Add Item</button>
+      </div>
+
+       <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Create Invoice</button>
+     </form>
+ 
+    <div v-if="successMessage" class="mt-4 text-green-600">
+       {{ successMessage }}
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      form: {
+        customer: "",
+        currency: "",
+        issueDate: "",
+        dueDate: "",
+        items: [{ description: "", amount: 0 }],
+      },
+      successMessage: "",
+    };
+  },
+  methods: {
+    addItem() {
+      this.form.items.push({ description: "", amount: 0 });
+    },
+    removeItem(index) {
+      this.form.items.splice(index, 1);
+    },
+    async submitInvoice() {
+      try {
+        const response = await axios.post(
+          'http://localhost:8009/api/invoices',
+          this.form,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+          }
+        );
+
+        console.log("Invoice created:", response.data);
+
+        this.successMessage = `Invoice created! Shareable Link: ${response.data.data.shareable}`;
+        this.form = {
+          customer: "",
+          currency: "",
+          issueDate: "",
+          dueDate: "",
+          items: [{ description: "", amount: 0 }],
+        };
+      } catch (error) {
+        console.error("Error creating invoice:", error);
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+input {
+  outline: none;
+}
+</style>
+
+<!-- <script lang="ts" setup>
 import DashboardLayout from "../layout/DashboardLayout.vue";
 import { InvoicesWhiteIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
@@ -241,4 +345,7 @@ const generateAnotherInvoice = () => {
     </button>
   </div>
 </DashboardLayout>
-</template>
+</template> -->
+
+
+
