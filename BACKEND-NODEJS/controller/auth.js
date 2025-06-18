@@ -125,7 +125,7 @@ async function register(req, res) {
     });
 
     // Send token as a cookie
-    res.cookie('token', token, { secure: false, httpOnly: true });
+    res.cookie('token', token, { secure: false, httpOnly: true,sameSite: 'lax' });
 
     return res.status(200).json({
       status: 200,

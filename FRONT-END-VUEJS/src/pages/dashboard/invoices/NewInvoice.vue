@@ -66,32 +66,38 @@ export default {
       this.form.items.splice(index, 1);
     },
     async submitInvoice() {
-      try {
-        const response = await axios.post(
-          'http://localhost:8009/api/invoices',
-          this.form,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            withCredentials: true,
-          }
-        );
-
-        console.log("Invoice created:", response.data);
-
-        this.successMessage = `Invoice created! Shareable Link: ${response.data.data.shareable}`;
-        this.form = {
-          customer: "",
-          currency: "",
-          issueDate: "",
-          dueDate: "",
-          items: [{ description: "", amount: 0 }],
-        };
-      } catch (error) {
-        console.error("Error creating invoice:", error);
+  try {
+    const response = await axios.post(
+      'http://localhost:8009/api/userInvoices',
+      this.form,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
       }
-    },
+    );
+
+    console.log("Invoice created:", response.data);
+
+    this.successMessage = `Invoice created! Shareable Link: ${response.data.data.shareable}`;
+    
+    // Reset form
+    this.form = {
+      customer: "",
+      currency: "",
+      issueDate: "",
+      dueDate: "",
+      items: [{ description: "", amount: 0 }],
+    };
+
+    // Redirect to invoices page and optionally pass the desired status query param
+    this.$router.push({ path: '/invoices', query: { status: 'draft' } });
+
+  } catch (error) {
+    console.error("Error creating invoice:", error);
+  }
+},
   },
 };
 </script>
