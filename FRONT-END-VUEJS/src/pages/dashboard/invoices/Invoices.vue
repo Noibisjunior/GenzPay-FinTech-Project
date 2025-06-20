@@ -7,18 +7,29 @@ import { FilterIcon, InvoicesIcon, SearchIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRightIcon } from '@radix-icons/vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 
 const invoices = ref<any[]>([]);
-const activeTab = ref('all');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+
+const route = useRoute();
+const router = useRouter();
+
+const activeTab = ref<string>(
+  Array.isArray(route.query.status)
+    ? route.query.status[0] || 'all'
+    : route.query.status || 'all'
+);
+
 
 const fetchInvoices = async (type: string) => {
   try {
     isLoading.value = true;
     error.value = null;
     let url = '';
+
+
 
     switch (type) {
       case 'draft':
@@ -38,7 +49,10 @@ const fetchInvoices = async (type: string) => {
     }
 
     const response = await axios.get(url, { withCredentials: true });
-    invoices.value = response.data.data;
+    invoices.value = response.data.data.map((inv: any) => ({
+  ...inv,
+  items: inv.items ?? [],
+}));
   } catch (err: any) {
     console.error('Error fetching invoices:', err);
     error.value = 'Failed to fetch invoices';
@@ -46,15 +60,29 @@ const fetchInvoices = async (type: string) => {
     isLoading.value = false;
   }
 };
-
+ console.log(invoices);
+// Fetch when component mounts
 onMounted(() => {
-  fetchInvoices(activeTab.value);
+  fetchInvoices(activeTab.value as string);
 });
 
+// Watch query param changes (when user navigates externally)
+watch(
+  () => route.query.status,
+  (newStatus) => {
+    activeTab.value = Array.isArray(newStatus) ? newStatus[0] || 'all' : newStatus || 'all';
+    fetchInvoices(activeTab.value);
+  }
+);
+
+
+// When activeTab changes via UI interaction, update the query param + fetch
 watch(activeTab, (newTab) => {
-  fetchInvoices(newTab);
+  router.replace({ query: { status: newTab } });
+  fetchInvoices(newTab as string);
 });
 </script>
+
 
 <template>
   <DashboardLayout title="Invoices">
@@ -80,48 +108,7 @@ watch(activeTab, (newTab) => {
           <FilterIcon />
         </Button>
       </div>
-
-      <!-- Invoices Tabs -->
-      <div class="w-full rounded-lg overflow-hidden bg-white border border-border shadow shadow-shadow">
-        <Tabs v-model="activeTab" class="w-full">
-          <TabsList class="grid w-full grid-cols-2 sm:grid-cols-6">
-            <TabsTrigger value="all">All invoices</TabsTrigger>
-            <TabsTrigger value="draft">Draft</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="processing">Processing</TabsTrigger>
-            <TabsTrigger value="due">Due</TabsTrigger>
-            <TabsTrigger value="overdue">Overdue</TabsTrigger>
-          </TabsList>
-
-          <!-- Tab Content -->
-          <TabsContent :value="activeTab">
-            <div v-if="isLoading" class="p-6 text-center">Loading invoices...</div>
-            <div v-else-if="error" class="p-6 text-red-600 text-center">{{ error }}</div>
-            <div v-else-if="invoices.length > 0" class="divide-y">
-              <div
-                v-for="invoice in invoices"
-                :key="invoice._id"
-                class="flex flex-col p-4 border-b"
-              >
-                <div class="font-medium text-lg">Customer: {{ invoice.customer }}</div>
-                <div class="text-sm text-muted-foreground">Currency: {{ invoice.currency }}</div>
-                <div class="text-sm">Issue Date: {{ invoice.issueDate }}</div>
-                <div class="text-sm">Due Date: {{ invoice.dueDate }}</div>
-                <div class="text-sm font-semibold mt-2">
-                  Total: ₦{{
-                    invoice.items.reduce((total: number, item: any) => total + item.amount, 0)
-                  }}
-                </div>
-                <a
-                  :href="invoice.shareable"
-                  target="_blank"
-                  class="text-blue-600 text-sm mt-1 hover:underline"
-                >
-                  View Invoice
-                </a>
-              </div>
-            </div>
-            <div v-else class="flex flex-col items-center px-6 pb-16 pt-12 max-w-96 mx-auto">
+            <div class="flex flex-col items-center px-6 pb-16 pt-12 max-w-96 mx-auto">
               <InvoicesIcon class="h-8 w-8" />
               <div class="my-2 text-2xl font-semibold">No invoices found</div>
               <span class="mb-10 text-center text-sm text-muted-foreground"
@@ -133,6 +120,61 @@ watch(activeTab, (newTab) => {
                   <ArrowRightIcon class="stroke-white" />
                 </Button>
               </RouterLink>
+            </div>
+      <!-- Invoices Tabs -->
+      <div class="w-full rounded-lg overflow-hidden bg-white border border-border shadow shadow-shadow">
+        <Tabs v-model="activeTab" class="w-full">
+          <TabsList class="grid w-full grid-cols-2 sm:grid-cols-6">
+            <TabsTrigger value="all">All invoices</TabsTrigger>
+            <TabsTrigger value="draft">Draft</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+                        <TabsTrigger value="due">Due</TabsTrigger>
+            <TabsTrigger value="overdue">Overdue</TabsTrigger>
+          </TabsList>
+
+          <!-- Tab Content -->
+          <TabsContent :value="activeTab">
+            <div v-if="isLoading" class="p-6 text-center">Loading invoices...</div>
+            <div v-else-if="error" class="p-6 text-red-600 text-center">{{ error }}</div>
+            <div v-else-if="invoices.length > 0" class="divide-y">
+              <div
+  v-for="invoice in invoices"
+  :key="invoice._id"
+  class="flex flex-col gap-3 p-5 bg-muted-background rounded-lg border border-border shadow-sm mb-4"
+>
+  <div class="flex justify-between items-center">
+    <div class="font-semibold text-lg">{{ invoice.customer || 'Unnamed Customer' }}</div>
+    <span class="text-xs text-muted-foreground">{{ invoice.currency }}</span>
+  </div>
+  <div class="flex justify-between text-sm mt-2">
+    <div>
+      <span class="font-medium">issueDate:</span>
+      {{ new Date(invoice.issueDate).toLocaleDateString() }}
+    </div>
+    <div>
+      <span class="font-medium">dueDue:</span>
+      {{ new Date(invoice.dueDate).toLocaleDateString() }}
+    </div>
+    <div>
+      <span class="font-medium"> Status: </span>
+      {{ invoice.Status }}
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center mt-2">
+    <div class="font-bold text-base">
+      ₦{{ invoice.items.reduce((total: number, item: any) => total + item.amount, 0).toLocaleString() }}
+    </div>
+    <a
+      :href="invoice.shareable"
+      target="_blank"
+      class="text-blue-600 text-sm hover:underline"
+    >
+      View Invoice
+    </a>
+
+  </div>
+</div>
             </div>
           </TabsContent>
         </Tabs>

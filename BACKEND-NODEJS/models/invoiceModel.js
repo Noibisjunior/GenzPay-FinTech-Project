@@ -5,16 +5,30 @@ const InvoiceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
      },
-  amount: {
-    type: Number,
+    customer: {
+    type: String,
+  },
+  currency: {
+    type: String,
   },
   status: {
     type: String,
-    enumeration: ['due', 'overdue', 'pending'],
+    enumeration: ['due', 'overdue', 'pending','draft'],
   },
   dueDate: {
     type: Date,
-  }
+  },
+  issueDate: {
+    type: Date,
+  },
+
+  items: [
+    {
+      description: String,
+      quantity: Number,
+      amount: Number,
+    },
+  ],
 });
 
 module.exports = mongoose.model('Invoice', InvoiceSchema);

@@ -1,9 +1,9 @@
-const Invoice = require('../models/customersInvoice'); 
+const Invoice = require('../models/invoiceModel'); 
 const generateShareableLink = require('../utils/shareableLink'); 
 
 const createInvoice = async (req, res) => {
   try {
-    const { customer, items, currency, issueDate, dueDate } = req.body;
+    const { customer, items, currency, issueDate, dueDate, status } = req.body;
 
 
     const invoice = await Invoice.create({
@@ -13,9 +13,10 @@ const createInvoice = async (req, res) => {
       currency,
       issueDate,
       dueDate,
+      status
     });
 
-
+await invoice.save();
     const shareableLink = generateShareableLink(invoice.id);
 
 
@@ -29,6 +30,7 @@ const createInvoice = async (req, res) => {
         currency,
         issueDate,
         dueDate,
+        status
       },
     });
   } catch (error) {
@@ -71,14 +73,11 @@ const getAllInvoices = async (req, res) => {
       const formattedInvoices = invoices.map(invoice => ({
       id: invoice._id,
       shareable: `<https://link-to-view-invoice.com/${invoice._id}>`,
-      customer: {
-        name: invoice.customer.name,
-        email: invoice.customer.email,
-        address: invoice.customer.address
-      },
+      customer:  invoice.customer,
       currency: invoice.currency,
       issueDate: invoice.issueDate,
-      dueDate: invoice.dueDate
+      dueDate: invoice.dueDate,
+      Status: invoice.status,
     }));
 
     return res.status(200).json({
@@ -116,14 +115,11 @@ const viewDraftInvoices = async (req, res) => {
     const formattedInvoices = invoices.map(invoice => ({
       id: invoice._id,
       shareable: `<https://link-to-view-invoice.com/${invoice._id}>`, // Updating actual link generation
-      customer: {
-        name: invoice.customer.name,
-        email: invoice.customer.email,
-        address: invoice.customer.address
-      },
+      customer:  invoice.customer,
       currency: invoice.currency,
       issueDate: invoice.issueDate,
-      dueDate: invoice.dueDate
+      dueDate: invoice.dueDate,
+      Status: invoice.status,
     }));
 
     return res.status(200).json({
@@ -158,19 +154,16 @@ const pendingInvoices = async (req, res) => {
       const formattedInvoices = invoices.map(invoice => ({
         id: invoice._id,
         shareable: `<https://link-to-view-invoice.com/${invoice._id}>`, // Updating actual link generation
-        customer: {
-          name: invoice.customer.name,
-          email: invoice.customer.email,
-          address: invoice.customer.address
-        },
+        customer:  invoice.customer,
         currency: invoice.currency,
         issueDate: invoice.issueDate,
-        dueDate: invoice.dueDate
+        dueDate: invoice.dueDate,
+        Status: invoice.status,
       }));
   
       return res.status(200).json({
         status: 200,
-        message: "Retrieved all paginated invoices successfully",
+        message: "Retrieved all pending invoices successfully",
         data: formattedInvoices
       });
     } catch (error) {
@@ -208,17 +201,11 @@ const getDueInvoices = async (req, res) => {
     const formattedInvoices = invoices.map(invoice => ({
       id: invoice._id,
       shareable: `<https://link-to-view-invoice.com/${invoice._id}>`,
-      customer: {
-        name: invoice.customerName,
-        email: invoice.customerEmail,
-        address: {
-          country: invoice.customerCountry,
-          state: invoice.customerState,
-        }
-      },
+      customer:  invoice.customer,
       currency: invoice.currency,
       issueDate: invoice.issueDate,
-      dueDate: invoice.dueDate
+      dueDate: invoice.dueDate,
+      Status: invoice.status,
     }));
 
     return res.status(200).json({
@@ -250,7 +237,7 @@ const overDueInvoices = async (req, res) => {
     const invoices = await Invoice.find({ userId, status })
                                   .skip(page * size)
                                   .limit(size);
-
+console.log("Fetched invoices: ", invoices);
     // Check if any invoices was found
     if (invoices.length === 0) {
       return res.status(404).json({
@@ -264,19 +251,13 @@ const overDueInvoices = async (req, res) => {
     const formattedInvoices = invoices.map(invoice => ({
       id: invoice._id,
       shareable: `<https://link-to-view-invoice.com/${invoice._id}>`,
-      customer: {
-        name: invoice.customerName,
-        email: invoice.customerEmail,
-        address: {
-          country: invoice.customerCountry,
-          state: invoice.customerState,
-        }
-      },
+      Status: invoice.status,
+      customer:  invoice.customer,
       currency: invoice.currency,
       issueDate: invoice.issueDate,
       dueDate: invoice.dueDate
     }));
-
+console.log(formattedInvoices)
     return res.status(200).json({
       status: 200,
       message: 'Retrieved all paginated overdue invoices successfully',
