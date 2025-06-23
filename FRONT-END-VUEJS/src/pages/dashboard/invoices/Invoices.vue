@@ -68,19 +68,43 @@ onMounted(() => {
 
 // Watch query param changes (when user navigates externally)
 watch(
-  () => route.query.status,
-  (newStatus) => {
-    activeTab.value = Array.isArray(newStatus) ? newStatus[0] || 'all' : newStatus || 'all';
-    fetchInvoices(activeTab.value);
-  }
-);
+  () => [route.query.status, route.query.refetch],
+  () => {
+    activeTab.value = Array.isArray(route.query.status)
+      ? route.query.status[0] || 'all'
+      : route.query.status || 'all'
+    fetchInvoices(activeTab.value)
+  },
+  { immediate: true }
+)
 
 
-// When activeTab changes via UI interaction, update the query param + fetch
+// When activeTab changes via UI interaction, update the query param and fetch
 watch(activeTab, (newTab) => {
   router.replace({ query: { status: newTab } });
   fetchInvoices(newTab as string);
 });
+
+const deleteInvoice = async (id: string) => {
+  if (!confirm("Are you sure you want to delete this invoice?")) return;
+
+  try {
+    const response = await axios.delete(`http://localhost:8009/api/invoices/${id}`, {
+      withCredentials: true
+    });
+
+    console.log(response.data.message);
+    
+    // Remove from local list without refetch
+    invoices.value = invoices.value.filter(inv => inv.id !== id);
+    
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
+    alert("Failed to delete invoice");
+  }
+};
+
+
 </script>
 
 
@@ -144,6 +168,21 @@ watch(activeTab, (newTab) => {
 >
   <div class="flex justify-between items-center">
     <div class="font-semibold text-lg">{{ invoice.customer || 'Unnamed Customer' }}</div>
+    <Button 
+  variant="destructive"
+  class="mt-2 w-max text-white bg-blue-600"
+  @click="deleteInvoice(invoice.id)"
+>
+  Delete
+</Button>
+
+<RouterLink :to="`invoices/${invoice.id}/edit`">
+                <Button class="w-full font-semibold gap-2 bg-blue-600">
+                  Edit invoice
+                  <ArrowRightIcon class="stroke-white" />
+                </Button>
+              </RouterLink>
+
     <span class="text-xs text-muted-foreground">{{ invoice.currency }}</span>
   </div>
   <div class="flex justify-between text-sm mt-2">

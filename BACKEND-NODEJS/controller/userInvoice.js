@@ -273,11 +273,79 @@ console.log(formattedInvoices)
 };
 
 
+const updateInvoice = async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    const userId = req.user.id;
+    const updateData = req.body;
+
+    // Find and update the invoice if it belongs to the authenticated user
+    const updatedInvoice = await Invoice.findOneAndUpdate(
+      { _id: invoiceId, userId },
+      updateData,
+      { new: true } // return the updated document
+    );
+
+    if (!updatedInvoice) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Invoice not found',
+        data: {}
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Invoice updated successfully',
+      data: updatedInvoice
+    });
+  } catch (error) {
+    console.error('Error updating invoice:', error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Server error',
+      data: {}
+    });
+  }
+};
+
+
+const getInvoiceById = async (req, res) => {
+  try {
+    const invoiceId = req.params.id;
+    const userId = req.user.id;
+
+    const invoice = await Invoice.findOne({ _id: invoiceId, userId });
+
+    if (!invoice) {
+      return res.status(404).json({
+        status: 404,
+        message: 'Invoice not found',
+        data: {}
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Invoice retrieved successfully',
+      data: invoice
+    });
+  } catch (error) {
+    console.error('Error fetching invoice:', error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Server error',
+      data: {}
+    });
+  }
+};
+
+
 const deleteInvoice = async (req, res) => {
   try {
     const invoiceId = req.params.id; 
     const userId = req.user.id; 
-
+console.log("Deleting Invoice ID:", invoiceId, "for user:", userId);
     // Find the invoice by ID and check if it belongs to the user
     const invoice = await Invoice.findOne({ _id: invoiceId, userId });
     if (!invoice) {
@@ -310,4 +378,4 @@ const deleteInvoice = async (req, res) => {
 
 module.exports = {createInvoice, getAllInvoices, 
                   viewDraftInvoices,pendingInvoices,
-                  getDueInvoices,overDueInvoices,deleteInvoice};
+                  getDueInvoices,overDueInvoices,updateInvoice,getInvoiceById,deleteInvoice};

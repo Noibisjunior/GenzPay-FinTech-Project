@@ -19,6 +19,8 @@ const {  viewDraftInvoices } = require('../controller/userInvoice.js');
 const {  pendingInvoices } = require('../controller/userInvoice.js');
 const {  getDueInvoices } = require('../controller/userInvoice.js');
 const {  overDueInvoices } = require('../controller/userInvoice.js');
+const {  updateInvoice }  = require('../controller/userInvoice.js');
+const {getInvoiceById}  = require ('../controller/userInvoice.js');
 const {  deleteInvoice } = require('../controller/userInvoice.js');
 const {  createCard } = require('../controller/card.js');
 const {  getAllCards } = require('../controller/card.js');
@@ -80,6 +82,7 @@ router.route('/api/viewDraftInvoices').get(verifyToken,viewDraftInvoices);
 router.route('/api/pendingInvoices').get(verifyToken,pendingInvoices);
 router.route('/api/dueInvoices').get(verifyToken,getDueInvoices);
 router.route('/api/overdueInvoices').get(verifyToken,overDueInvoices);
+router.route('/api/invoices/:id').get(verifyToken, getInvoiceById);
 router.route('/api/getAllCards').get(verifyToken,getAllCards);
 router.route('/api/cards/:id').get(verifyToken, getCardById);
 router.route('/api/wallets/balance').get(verifyToken, getCurrentBalance);
@@ -98,7 +101,7 @@ router.route('/api/verify-otp').get(verifyOTP);
 
 
 
-
+router.route('/api/invoices/:id').put(verifyToken, updateInvoice);
 router.route('/api/invoices/:id').delete(verifyToken,deleteInvoice);
 router.route('/api/beneficiaries/:id').delete(verifyToken,deleteBeneficiary);
 router.route('/api/card/:id').delete(verifyToken,deleteCard);
