@@ -1,64 +1,45 @@
-const axios = require('axios'); 
 const Card = require('../models/CardModel');
 
 const createCard = async (req, res) => {
-  const { name, type, brand, fees, walletId } = req.body;
+  const { name, type, brand} = req.body;
 
   try {
-    const userId = req.user.id; 
-//payload to send to the third-party card provider
-    const thirdPartyPayload = {
-      name,
-      type,
+    const userId = req.user.id;
+
+    // Mock third-party API call
+    const cardData = {
+      reference: 'mock_ref_' + Date.now(),
+      card_reference: 'mock_card_ref_' + Date.now(),
+      type: type ,
+      currency: 'USD',
+      holderName: name,
       brand,
-      fees,
-      walletId,
+      expiry_month: '12',
+      expiry_year: '2028',
+      first_six: '123456',
+      last_four: '7890',
+      status: 'active',
     };
 
-    // Making request to the third-party API
-    const thirdPartyResponse = await axios.post(
-      'https://third-party-api.com/cards', // Replace with the actual endpoint
-      thirdPartyPayload,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.THIRD_PARTY_API_KEY}`, 
-        },
-      }
-    );
+    const newCard = await Card.create({
+      userId,
+      ...cardData,
+    });
 
-    // Assuming the response contains the card details in `thirdPartyResponse.data`
-    const cardData = thirdPartyResponse.data;
-
-    
     return res.status(201).json({
       status: 201,
       message: 'Card created successfully',
-      data: {
-        reference: cardData.reference || 'webhook unique reference', // Replace with actual field from the response
-        card_reference: cardData.card_reference,
-        type: cardData.type || 'virtual',
-        currency: cardData.currency || 'USD',
-        holder_name: cardData.holder_name || name,
-        brand: cardData.brand,
-        expiry_month: cardData.expiry_month,
-        expiry_year: cardData.expiry_year,
-        first_six: cardData.first_six,
-        last_four: cardData.last_four,
-        status: cardData.status || 'active',
-        date: new Date().toISOString(), // or cardData.date if provided
-        // Include additional fields if available in the third-party response
-      },
+      data: cardData,
     });
   } catch (error) {
     console.error('Error creating card:', error);
     return res.status(500).json({
       status: 500,
       message: 'Failed to create card',
-      error: error.response?.data || 'An unexpected error occurred',
+      error: error.message || 'An unexpected error occurred',
     });
   }
 };
-
 
 
 
@@ -88,7 +69,7 @@ const getAllCards = async (req, res) => {
       card_reference: card.card_reference,
       type: card.type,
       currency: card.currency,
-      holder_name: card.holder_name,
+      holderName: card.holderName,
       brand: card.brand,
       expiry_month: card.expiry_month,
       expiry_year: card.expiry_year,
@@ -97,7 +78,7 @@ const getAllCards = async (req, res) => {
       status: card.status,
       date: card.createdAt 
     }));
-
+console.log(formattedCards)
     return res.status(201).json({
       status: 201,
       message: 'Retrieved all paginated cards successfully',
@@ -138,7 +119,7 @@ const getCardById = async (req, res) => {
         card_reference: card.card_reference,
         type: card.type,
         currency: card.currency,
-        holder_name: card.holder_name,
+        holderName: card.holderName,
         brand: card.brand,
         expiry_month: card.expiry_month,
         expiry_year: card.expiry_year,
@@ -198,3 +179,60 @@ const deleteCard = async (req, res) => {
 
 module.exports = { createCard,getAllCards, getCardById, deleteCard 
 };
+
+//For API SandBox
+/*const axios = require('axios');
+
+const createCard = async (req, res) => {
+  const { name, type, brand } = req.body;
+
+  try {
+    const userId = req.user.id;
+
+    // External API Request
+    const response = await axios.post(
+      `${process.env.MARQETA_API_URL}/cards`,
+      {
+        user_token: userId,
+        card_product_token: "prod_12345",
+        exp_month: "12",
+        exp_year: "2028",
+        cardholder_name: name
+      },
+      {
+        auth: {
+          username: process.env.MARQETA_API_KEY,
+          password: process.env.MARQETA_API_SECRET
+        }
+      }
+    );
+
+    const cardData = response.data;
+
+    // Save locally
+    await Card.create({
+      userId,
+      reference: cardData.token,
+      type,
+      brand,
+      currency: 'USD',
+      holder_name: cardData.cardholder_name,
+      expiry_month: cardData.exp_month,
+      expiry_year: cardData.exp_year,
+      status: 'active',
+    });
+
+    return res.status(201).json({
+      status: 201,
+      message: 'Card created successfully via Marqeta API',
+      data: cardData
+    });
+  } catch (error) {
+    console.error('Error creating card via API:', error);
+    return res.status(500).json({
+      status: 500,
+      message: 'Failed to create card via API',
+      error: error.response?.data || error.message
+    });
+  }
+};*/

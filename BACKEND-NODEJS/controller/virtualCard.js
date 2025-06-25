@@ -1,21 +1,23 @@
 const Card = require('../models/CardModel');
 
-  
+  const createDummyCard = async (userId) => {
+  await Card.create({
+    userId,
+    reference: `REF-${Math.floor(Math.random() * 1000000)}`,
+    card_reference: `CARD-${Math.floor(Math.random() * 1000000)}`,
+    type: 'Debit',
+    currency: 'USD',
+    holder_name: 'Test Card',
+    brand: 'Mastercard',
+    expiry_month: '12',
+    expiry_year: '28',
+    first_six: '123456',
+    last_four: '7890',
+    status: 'active',
+    date: new Date()
+  });
+};
 
-const createDummyCard = async (userId) => {
-    
-    await Card.create({
-      userId,
-      name: 'Test Card',
-      type: 'Debit',
-      brand: 'Mastercard',
-      cardNumber: '1234567812345678', // Ensure you encrypt this if necessary
-      cvv: '123', // Encrypt this as well if required
-      expiryDate: '12/25',
-      billingAddress: '123 Test Street, Test City',
-      status: 'active',
-    });
-  };
 
 const getActiveVirtualCard = async (req, res) => {
     try {
@@ -30,12 +32,7 @@ const activeCard = await Card.find({
   }) 
     .sort({ createdAt: -1 })
     .limit(parseInt(limit));
-
-
-      
-        
-          
-        /*if (!cardNumber || cardNumber.length !== 16) {
+                    /*if (!cardNumber || cardNumber.length !== 16) {
             return res.status(400).json({ message: 'Card number must be 16 digits' });
           }
           if (!cvv || (cvv.length !== 3 && cvv.length !== 4)) {

@@ -8,12 +8,13 @@ const cardSchema = new mongoose.Schema({
     required: true,
     ref: 'User',
   },
-  name: {
+  holderName: {
     type: String,
   },
   type: {
     type: String,
     enum: ['Debit', 'Credit'],
+    required: true
   },
   brand: {
     type: String,

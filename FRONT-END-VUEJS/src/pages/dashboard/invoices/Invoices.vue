@@ -175,15 +175,7 @@ const deleteInvoice = async (id: string) => {
 >
   Delete
 </Button>
-
-<RouterLink :to="`invoices/${invoice.id}/edit`">
-                <Button class="w-full font-semibold gap-2 bg-blue-600">
-                  Edit invoice
-                  <ArrowRightIcon class="stroke-white" />
-                </Button>
-              </RouterLink>
-
-    <span class="text-xs text-muted-foreground">{{ invoice.currency }}</span>
+   <span class="text-xs text-muted-foreground">{{ invoice.currency }}</span>
   </div>
   <div class="flex justify-between text-sm mt-2">
     <div>

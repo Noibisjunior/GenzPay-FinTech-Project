@@ -22,9 +22,7 @@ const routes = [
         children: [
           { path: '', component: () => import('@/pages/dashboard/invoices/Invoices.vue') },
           { path: 'new', component: () => import('@/pages/dashboard/invoices/NewInvoice.vue') },
-          { path: ':id/edit', component: () => import('@/pages/dashboard/invoices/editInvoice.vue')
-}
-        ]
+                  ]
       },
       { path: 'cards', component: () => import('@/pages/dashboard/cards/Cards.vue') },
       { 

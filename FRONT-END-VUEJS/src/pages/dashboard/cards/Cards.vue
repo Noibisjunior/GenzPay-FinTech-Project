@@ -1,4 +1,286 @@
 <script lang="ts" setup>
+import DashboardLayout from "../layout/DashboardLayout.vue";
+import { Button } from "@/components/ui/button";
+import { CardWhiteIcon, EmptyCardsList } from "@/components/icons";
+import { ref, onMounted } from "vue";
+import RightModal from "@/components/all-modals/RightModal.vue";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { ArrowRightIcon } from "@radix-icons/vue";
+
+interface Card {
+  reference: string
+  type: string
+  currency: string
+  holderName: string
+  brand: string
+  expiry_month: string
+  expiry_year: string
+  status: string
+}
+
+const currentStep = ref(1)
+const cardBrands = ref(['Visa', 'Mastercard', 'American Express'])
+
+const cardDetails = ref({
+  name: '',
+  type: '',
+  brand: '',
+  wallet: ''
+})
+
+const cardsList = ref<Card[]>([])
+const isLoading = ref(false)
+const error = ref<string | null>(null)
+
+// Fetch all cards on mount
+const fetchCards = async () => {
+  try {
+    isLoading.value = true
+    const response = await axios.get('http://localhost:8009/api/getAllCards', { withCredentials: true })
+    cardsList.value = response.data.data
+  } catch (err: any) {
+    error.value = 'Failed to load cards'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const createCard = async () => {
+  try {
+    isLoading.value = true
+    await axios.post(
+      'http://localhost:8009/api/createCard',
+      {
+        name: cardDetails.value.name,
+        type: cardDetails.value.type,
+        brand: cardDetails.value.brand,
+        walletId: cardDetails.value.wallet
+      },
+      { withCredentials: true }
+    )
+    await fetchCards()
+    currentStep.value = 1
+    cardDetails.value = { name: '', type: '', brand: '', wallet: '' }
+  } catch (err: any) {
+    error.value = 'Failed to create card'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => fetchCards())
+</script>
+
+
+<template>
+  <DashboardLayout title="Cards">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex flex-col items-center gap-8 px-6 pb-12 pt-8">
+        <RightModal
+          title="New Card"
+          :step="currentStep + ''"
+          description="Please note that funds in this card cannot be withdrawn."
+        >
+          <template #trigger>
+            <Button class="w-full font-semibold gap-2">
+              <CardWhiteIcon />
+              Create new card
+            </Button>
+          </template>
+
+          <div v-if="currentStep === 1" class="grid gap-6 mt-6">
+            <div class="flex flex-col gap-2">
+              <Label for="name">Card Name*</Label>
+              <Input id="name" v-model="cardDetails.name" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <Label>Card Type*</Label>
+              <Select v-model="cardDetails.type">
+                <SelectTrigger class="py-5 border-secondary-foreground/30">
+                  <SelectValue placeholder="Choose Card Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="Credit">Credit</SelectItem>
+                    <SelectItem value="Debit">Debit</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <Label>Card Brand*</Label>
+              <Select v-model="cardDetails.brand">
+                <SelectTrigger class="py-5 border-secondary-foreground/30">
+                  <SelectValue placeholder="Choose Card Brand" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem v-for="brand in cardBrands" :key="brand" :value="brand">{{ brand }}</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button @click="currentStep = 2" class="w-full mt-6 flex gap-2">
+              Continue <ArrowRightIcon class="size-4 stroke-white" />
+            </Button>
+          </div>
+
+          <div v-else-if="currentStep === 2" class="grid gap-6 mt-6">
+            <div class="flex flex-col gap-2">
+              <Label>Select Wallet</Label>
+              <Select v-model="cardDetails.wallet">
+                <SelectTrigger class="py-5 border-secondary-foreground/30">
+                  <SelectValue placeholder="Select wallet currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="NGN">NGN</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button @click="createCard" class="w-full mt-6 flex gap-2">
+              Submit <ArrowRightIcon class="size-4 stroke-white" />
+            </Button>
+          </div>
+        </RightModal>
+
+        <div v-if="isLoading" class="text-muted-foreground">Loading cards...</div>
+        <div v-else-if="error" class="text-red-500">{{ error }}</div>
+
+        <div v-else-if="cardsList.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          <div
+            v-for="card in cardsList"
+            :key="card.reference"
+            class="border rounded-xl p-5 flex flex-col gap-2 shadow"
+          >
+            <div class="font-semibold text-lg">{{ card.holderName }}</div>
+            <div class="text-sm text-muted-foreground">{{ card.brand }} • {{ card.type }}</div>
+            <div class="text-sm text-muted-foreground">Expiry: {{ card.expiry_month }}/{{ card.expiry_year }}</div>
+            <div class="text-sm">Status: <span class="font-medium">{{ card.status }}</span></div>
+          </div>
+        </div>
+
+        <div v-else>
+          <EmptyCardsList class="w-full h-auto" />
+          <p class="text-muted-foreground mt-4">No cards found.</p>
+        </div>
+      </div>
+    </div>
+  </DashboardLayout>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <script lang="ts" setup>
 import Card from "@/components/Card.vue";
 import DashboardLayout from "../layout/DashboardLayout.vue";
 import { Button } from "@/components/ui/button";
@@ -146,9 +428,10 @@ const addCard = () => {
               Continue
               <ArrowRightIcon class="size-4 stroke-white" />
             </Button>
-          </div>
+          </div> -->
 
           <!-- Step 2 -->
+           <!--
           <div v-if="currentStep === 2" class="grid gap-10 mt-10 py-4">
             Step 2
             <div class="grid grid-cols-5 p-6 border border-border bg-primary/5 rounded-lg">
@@ -190,4 +473,4 @@ const addCard = () => {
     </Card>
   </div>
 </DashboardLayout>
-</template>
+</template> -->
