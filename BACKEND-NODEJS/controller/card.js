@@ -65,6 +65,7 @@ const getAllCards = async (req, res) => {
 
     
     const formattedCards = cards.map(card => ({
+       _id: card._id,
       reference: card.reference,
       card_reference: card.card_reference,
       type: card.type,

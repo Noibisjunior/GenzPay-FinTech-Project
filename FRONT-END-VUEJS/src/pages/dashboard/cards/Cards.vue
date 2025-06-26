@@ -26,8 +26,9 @@ interface Card {
   expiry_month: string
   expiry_year: string
   status: string
+  _id: string
 }
-
+const isCardModalOpen = ref(false);
 const currentStep = ref(1)
 const cardBrands = ref(['Visa', 'Mastercard', 'American Express'])
 
@@ -48,6 +49,8 @@ const fetchCards = async () => {
     isLoading.value = true
     const response = await axios.get('http://localhost:8009/api/getAllCards', { withCredentials: true })
     cardsList.value = response.data.data
+    console.log(cardsList.value)
+
   } catch (err: any) {
     error.value = 'Failed to load cards'
   } finally {
@@ -71,13 +74,23 @@ const createCard = async () => {
     await fetchCards()
     currentStep.value = 1
     cardDetails.value = { name: '', type: '', brand: '', wallet: '' }
+    isCardModalOpen.value = false;
   } catch (err: any) {
     error.value = 'Failed to create card'
   } finally {
     isLoading.value = false
   }
 }
-
+const deleteCard = async (cardId: string) => {
+  if (confirm('Are you sure you want to delete this card?')) {
+    try {
+      await axios.delete(`http://localhost:8009/api/card/${cardId}`, { withCredentials: true });
+          cardsList.value = cardsList.value.filter(card => card._id !== cardId);
+    } catch (error) {
+      console.error('Error deleting card:', error);
+    }
+  }
+}
 onMounted(() => fetchCards())
 </script>
 
@@ -87,10 +100,12 @@ onMounted(() => fetchCards())
     <div class="max-w-5xl mx-auto">
       <div class="flex flex-col items-center gap-8 px-6 pb-12 pt-8">
         <RightModal
-          title="New Card"
-          :step="currentStep + ''"
-          description="Please note that funds in this card cannot be withdrawn."
+        v-model:open="isCardModalOpen"
+        title="New Card"
+        :step="currentStep + ''"
+        description="Please note that the funds in this card cannot be withdrawn"
         >
+
           <template #trigger>
             <Button class="w-full font-semibold gap-2">
               <CardWhiteIcon />
@@ -173,7 +188,9 @@ onMounted(() => fetchCards())
             <div class="text-sm text-muted-foreground">{{ card.brand }} • {{ card.type }}</div>
             <div class="text-sm text-muted-foreground">Expiry: {{ card.expiry_month }}/{{ card.expiry_year }}</div>
             <div class="text-sm">Status: <span class="font-medium">{{ card.status }}</span></div>
+            <Button variant="destructive" class="mt-2 w-max text-white bg-blue-600" @click="deleteCard(card._id)">Delete</Button>
           </div>
+          
         </div>
 
         <div v-else>
