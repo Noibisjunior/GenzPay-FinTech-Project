@@ -2,8 +2,7 @@ const express = require('express');
 const cors = require('cors')
 require('dotenv').config();
 const cookieParser = require ('cookie-parser');
-
-
+const webhookRoutes = require('./routes/webhook');
 
 
 const app = express();
@@ -14,9 +13,10 @@ app.use(
     credentials: true
   })
 );
-
+app.use('/api/webhooks/paystack', webhookRoutes);
 app.use(express.json());
 app.use(cookieParser());
+
 
 
 

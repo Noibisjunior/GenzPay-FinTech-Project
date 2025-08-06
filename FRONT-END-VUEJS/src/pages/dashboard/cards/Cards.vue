@@ -188,7 +188,7 @@ onMounted(() => fetchCards())
             <div class="text-sm text-muted-foreground">{{ card.brand }} • {{ card.type }}</div>
             <div class="text-sm text-muted-foreground">Expiry: {{ card.expiry_month }}/{{ card.expiry_year }}</div>
             <div class="text-sm">Status: <span class="font-medium">{{ card.status }}</span></div>
-            <Button variant="destructive" class="mt-2 w-max text-white bg-blue-600" @click="deleteCard(card._id)">Delete</Button>
+            <Button variant="destructive" class="mt-2 w-max text-white bg-purple-700" @click="deleteCard(card._id)">Delete</Button>
           </div>
           
         </div>

@@ -33,7 +33,8 @@ const routes = [
           {path: 'convert', component: () => import('@/pages/dashboard/wallets/ConvertFunds.vue')},
         ]
       },
-      { path: 'transactions', component: () => import('@/pages/dashboard/transactions/Transactions.vue') },
+      {path: '/payment-success', component: () => import('@/pages/dashboard/wallets/paymentSuccess.vue')},
+       { path: 'transactions', component: () => import('@/pages/dashboard/transactions/Transactions.vue') },
       { 
         path: 'profile', 
         children: [

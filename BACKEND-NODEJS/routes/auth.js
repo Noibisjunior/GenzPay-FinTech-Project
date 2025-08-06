@@ -30,10 +30,8 @@ const {   getAccountStatement  } = require('../controller/walletBalance.js');
 const {  deleteCard } = require('../controller/card.js');
 const {  getIndividualAccountDetails } = require('../controller/walletDetails.js');
 const {  getIncomesAndExpenses  } = require('../controller/walletDetails.js');
-const {  sendMoney  } = require('../controller/sendMoney');
-const {  convertCurrency  } = require('../controller/sendMoney');
-const {  handleDepositWebhook  } = require('../controller/webHook');
-const { depositToAccount  } = require('../controller/sendMoney');
+const {  sendMoney  } = require('../controller/fundwallet.js');
+const {  convertCurrency  } = require('../controller/fundwallet.js');
 const { getAllTransactions  } = require('../controller/Transaction.js');
 const { getTransactionById  } = require('../controller/Transaction.js');
 const {  getCurrentUser  } = require('../controller/userProfile.js');
@@ -48,6 +46,10 @@ const {  getNotificationById } = require('../controller/notification.js');
 const {  updateNotificationStatus } = require('../controller/notification.js');
 const {  deleteNotification } = require('../controller/notification.js');
 const {verifyOTP,resendOTP} = require('../controller/verifyOTP.js')
+const { CreateWallet, getWalletsByUserId } = require("../controller/walletCreation.js");
+const {initializeSendMoney} = require('../controller/initializeFundWallet.js')
+const {verifyPayment} = require('../controller/initializeFundWallet.js')
+const { sendToBank } = require("../controller/withdrawFunds.js");
 
 
 
@@ -60,18 +62,19 @@ router.route('/api/auth/reset-password/:tokens').post(resetPassword);
 router.route('/api/auth/logOut').post(logOut)
 router.route('/api/userInvoices').post(verifyToken, createInvoice);
 router.route('/api/createCard').post(verifyToken, createCard);
-router.route('/api/wallets/send').post(verifyToken, sendMoney);
+router.route('/api/wallets/send').post(verifyToken, sendMoney); 
 router.route('/api/wallets/convert').post(verifyToken, convertCurrency);
-router.route('/api/wallets/deposit').post(verifyToken, depositToAccount);
-router.route('/api/wallets/deposit-webhook').post(handleDepositWebhook);
 router.route('/api/wallets/withdraw').post();
 router.route('/api/users/:id/beneficiaries').post(verifyToken,addBeneficiary);
 router.route('/api/users/2fa').post(verifyToken, activate2FA);
 router.route('/api/verification').post(verifyToken, verifyUser);
 router.route('/api/resend-otp').post(resendOTP)
+router.route('/api/payment/initiate').post(verifyToken,initializeSendMoney);
+router.route('/api/payment/withdraw').post(verifyToken,sendToBank);
+
 
 // Creating GET routes
-router.route('/api/users/balances').get(verifyToken,getUserBalances);
+router.route('/api/balance').get(verifyToken,CreateWallet);
 router.route('/api/accounts').get(verifyToken,getUserAccounts);
 router.route('/api/invoices/summary').get(verifyToken,getInvoiceSummary);
 router.route('/api/rates').get(getCurrentExchangeRates);
@@ -98,6 +101,8 @@ router.route('/api/beneficiaries/').get(verifyToken, searchBeneficiaries );
 router.route('/api/notifications/count').get(verifyToken, getNotificationCount );
 router.route('/api/notifications/:id').get(verifyToken, getNotificationById );
 router.route('/api/verify-otp').get(verifyOTP);
+router.route('api/wallets/:userId').get(getWalletsByUserId);
+router.route('/api/verify-payment').get(verifyPayment);
 
 
 
@@ -110,12 +115,6 @@ router.route('/api/notification/:id').delete(verifyToken,deleteNotification);
 
 router.route('/api/notifications/:id').put(verifyToken, updateNotificationStatus );
 module.exports = router;
-
-
-
-
-
-
 
 
 
