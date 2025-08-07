@@ -66,7 +66,7 @@ onMounted(() => {
         <span class="flex gap-2 items-center"><ConvertIcon /><span>Convert Funds</span></span>
       </RouterLink>
 
-      <RouterLink to="wallets/create-wallet" class="grid place-items-center gap-2 text-primary px-4 py-2.5 border bg-primary/5 rounded-lg hover:bg-primary/10">
+      <RouterLink to="wallets/withdraw" class="grid place-items-center gap-2 text-primary px-4 py-2.5 border bg-primary/5 rounded-lg hover:bg-primary/10">
         <span class="flex gap-2 items-center"><WalletsWhiteIcon /><span>withdraw funds</span></span>
       </RouterLink>
       </div>

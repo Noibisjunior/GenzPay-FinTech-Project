@@ -31,6 +31,7 @@ const routes = [
           { path: '', component: () => import('@/pages/dashboard/wallets/Wallets.vue'), },
           { path: 'send', component: () => import('@/pages/dashboard/wallets/SendMoney.vue'), },
           {path: 'convert', component: () => import('@/pages/dashboard/wallets/ConvertFunds.vue')},
+          {path: 'withdraw', component: () => import('@/pages/dashboard/wallets/withdrawFunds.vue')},
         ]
       },
       {path: '/payment-success', component: () => import('@/pages/dashboard/wallets/paymentSuccess.vue')},

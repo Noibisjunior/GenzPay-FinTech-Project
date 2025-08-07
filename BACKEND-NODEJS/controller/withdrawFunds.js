@@ -2,18 +2,30 @@ const axios = require("axios");
 const Wallet = require("../models/wallet");
 const Transaction = require("../models/transactionModel");
 require("dotenv").config();
+const mongoose = require("mongoose");
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 
 exports.sendToBank = async (req, res) => {
   try {
-    const { userId, amount, account_number, bank_code } = req.body;
+    const { amount, account_number, bank_code } = req.body;
+    if (!amount || !account_number || !bank_code) {
+  return res.status(400).json({ error: "Missing required fields" });
+}
+
+    const userId = new mongoose.Types.ObjectId(req.user.id);
 
     
-    const wallet = await Wallet.findOne({ userId });
-    if (!wallet || wallet.balance < amount) {
+    const wallet = await Wallet.findOne({ userId});
+
+    if (!wallet) {
+      return res.status(404).json({ error: "Wallet not found" });
+    }
+
+    if (wallet.balance < amount) {
       return res.status(400).json({ error: "Insufficient balance" });
     }
+    console.log("Wallet balance:", wallet.balance, "Requested amount:", amount);
 
     // Creating transfer recipient
     const recipientRes = await axios.post(
@@ -31,6 +43,7 @@ exports.sendToBank = async (req, res) => {
         },
       }
     );
+console.log("Recipient response:", recipientRes.data);
 
     const recipientCode = recipientRes.data.data.recipient_code;
 

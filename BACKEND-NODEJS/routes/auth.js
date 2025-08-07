@@ -6,8 +6,7 @@ const { login,
         forgotPassword,
         resetPassword,
         logOut } = require('../controller/auth.js');
-
-const {getUserBalances} = require('../controller/userController.js')
+        
 const {getUserAccounts} = require('../controller/accountController.js')
 const {getInvoiceSummary} = require('../controller/invoiceController.js')
 const {getCurrentExchangeRates} = require('../controller/ExchangeRateController.js')
