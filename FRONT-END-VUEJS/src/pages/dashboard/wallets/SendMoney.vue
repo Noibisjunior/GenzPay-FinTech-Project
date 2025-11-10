@@ -12,16 +12,15 @@ const isProcessing = ref(false)
 
 const isLoading = ref(false);
 
-const payWithPaystack = async () => {
+const payWithFlutter = async () => {
   if (!email.value || !amount.value || !fullName.value) {
-    alert("All details are required");
     return;
   }
 isProcessing.value = true
   isLoading.value = true;
 
   try {
-    const response = await axios.post('http://localhost:8009/api/payment/initiate', {
+    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/payment/initiate`, {
       fullName: fullName.value,
       email: email.value,
       amount: amount.value,
@@ -45,7 +44,7 @@ isProcessing.value = true
   <DashboardLayout title="Send Money">
   <div class="p-4 max-w-md mx-auto">
     <h1 class="text-xl font-bold mb-4">Send Money</h1>
-    <form @submit.prevent="payWithPaystack" class="space-y-4">
+    <form @submit.prevent="payWithFlutter" class="space-y-4">
       <div class="mb-3">
         <label class="block font-medium">Full Name</label>
     <input v-model="fullName" class="border rounded p-2 w-full" required />

@@ -34,6 +34,7 @@ exports.initializeSendMoney = async (req, res) => {
       userId,
       reference,
       amount,
+      type: "credit",
       status: 'pending',
     });
 

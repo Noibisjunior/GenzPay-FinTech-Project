@@ -11,15 +11,20 @@ const banks = ref<Bank[]>([])
 const selectedBankCode = ref<string>('')
 const accountNumber = ref<string>('')
 const amount = ref<number | null>(null)
-const description = ref<string>('')
+const beneficiaryName = ref<string>('')
+const narration = ref<string>('')
+const debitCurrency = ref<string>('NGN')
+const destinationBranchCode = ref<string>('GH280103')
+const callbackUrl = ref<string>('https://webhook.site/your-sandbox-webhook-url')
 
 const isLoading = ref<boolean>(false)
 const error = ref<string>('')
-const success = ref<boolean>(false)
+const success = ref<string>('')
 
+// Fetch list of banks (via backend proxy endpoint)
 const fetchBanks = async () => {
   try {
-    const response = await axios.get('https://api.paystack.co/bank?currency=NGN')
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/payment/banks`)
     banks.value = response.data.data
   } catch (err) {
     console.error('Failed to fetch banks:', err)
@@ -29,43 +34,54 @@ const fetchBanks = async () => {
 
 onMounted(fetchBanks)
 
+// Reset all fields
 const resetForm = () => {
   selectedBankCode.value = ''
   accountNumber.value = ''
   amount.value = null
-  description.value = ''
+  beneficiaryName.value = ''
+  narration.value = ''
 }
 
+// Handle transfer submission
 const handleSubmit = async () => {
-  if (!selectedBankCode.value || !accountNumber.value || !amount.value) {
+  if (!selectedBankCode.value || !accountNumber.value || !amount.value || !beneficiaryName.value) {
     error.value = 'Please fill in all required fields.'
     return
   }
 
   isLoading.value = true
   error.value = ''
-  success.value = false
+  success.value = ''
 
   try {
     const response = await axios.post(
-      'http://localhost:8009/api/payment/withdraw',
+      `${import.meta.env.VITE_API_BASE_URL}/api/payment/withdraw`,
       {
         bank_code: selectedBankCode.value,
         account_number: accountNumber.value,
         amount: amount.value,
-        description: description.value,
+        beneficiary_name: beneficiaryName.value,
+        narration: narration.value,
+        debit_currency: debitCurrency.value,
+        destination_branch_code: destinationBranchCode.value,
+        callback_url: callbackUrl.value,
       },
       { withCredentials: true }
     )
 
     if (response.status === 200) {
-      success.value = true
+      success.value = '✅ Transfer simulated successfully (Sandbox Mode).'
       resetForm()
     } else {
       throw new Error('Unexpected server response')
     }
   } catch (err: any) {
-    error.value = err.response?.data?.message || err.message || 'Transfer failed.'
+    console.error(err)
+    error.value =
+      err.response?.data?.error ||
+      err.response?.data?.details?.message ||
+      'Transfer failed. Please try again.'
   } finally {
     isLoading.value = false
   }
@@ -73,10 +89,16 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto mt-10 p-6 rounded-xl shadow-lg border bg-white">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">Send Money to Bank Account</h2>
+  <div
+    class="max-w-md mx-auto mt-10 p-6 rounded-2xl shadow-xl border border-gray-200 bg-white"
+  >
+    <h2 class="text-2xl font-bold mb-2 text-gray-800 text-center">Send to Bank Account</h2>
+    <p class="text-sm text-gray-500 mb-6 text-center">
+      This is a <strong>Flutterwave Sandbox</strong> simulation — no real transfers occur.
+    </p>
 
     <form @submit.prevent="handleSubmit" class="space-y-4">
+      <!-- Bank -->
       <div>
         <label for="bank" class="block font-medium text-gray-700">Select Bank</label>
         <select
@@ -92,20 +114,35 @@ const handleSubmit = async () => {
         </select>
       </div>
 
+      <!-- Account Number -->
       <div>
         <label for="accountNumber" class="block font-medium text-gray-700">Account Number</label>
         <input
           v-model="accountNumber"
-          type="number"
+          type="text"
           id="accountNumber"
           maxlength="10"
-          pattern="\\d{10}"
+          pattern="\d{10}"
           placeholder="10-digit account number"
           class="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300"
           required
         />
       </div>
 
+      <!-- Beneficiary Name -->
+      <div>
+        <label for="beneficiaryName" class="block font-medium text-gray-700">Beneficiary Name</label>
+        <input
+          v-model="beneficiaryName"
+          type="text"
+          id="beneficiaryName"
+          placeholder="Enter beneficiary's name"
+          class="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300"
+          required
+        />
+      </div>
+
+      <!-- Amount -->
       <div>
         <label for="amount" class="block font-medium text-gray-700">Amount (₦)</label>
         <input
@@ -119,26 +156,29 @@ const handleSubmit = async () => {
         />
       </div>
 
+      <!-- Narration -->
       <div>
-        <label for="description" class="block font-medium text-gray-700">Description (optional)</label>
+        <label for="narration" class="block font-medium text-gray-700">Narration (optional)</label>
         <textarea
-          v-model="description"
-          id="description"
+          v-model="narration"
+          id="narration"
           rows="3"
+          placeholder="e.g. Payment for goods"
           class="w-full px-4 py-2 border rounded focus:ring focus:ring-blue-300"
-        />
+        ></textarea>
       </div>
 
       <button
         type="submit"
         :disabled="isLoading"
-        class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+        class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 transition"
       >
-        {{ isLoading ? 'Sending...' : 'Send Money' }}
+        {{ isLoading ? 'Processing...' : 'Send Money' }}
       </button>
     </form>
 
-    <p v-if="error" class="mt-4 text-red-600 text-sm">{{ error }}</p>
-    <p v-if="success" class="mt-4 text-green-600 text-sm">Transfer successful!</p>
+    <!-- Feedback -->
+    <p v-if="error" class="mt-4 text-red-600 text-sm text-center">{{ error }}</p>
+    <p v-if="success" class="mt-4 text-green-600 text-sm text-center">{{ success }}</p>
   </div>
 </template>

@@ -49,6 +49,7 @@ const { CreateWallet, getWalletsByUserId } = require("../controller/walletCreati
 const {initializeSendMoney} = require('../controller/initializeFundWallet.js')
 const {verifyPayment} = require('../controller/initializeFundWallet.js')
 const { sendToBank } = require("../controller/withdrawFunds.js");
+const {GetAllBanks} = require("../controller/withdrawFunds.js");
 
 
 
@@ -102,6 +103,7 @@ router.route('/api/notifications/:id').get(verifyToken, getNotificationById );
 router.route('/api/verify-otp').get(verifyOTP);
 router.route('api/wallets/:userId').get(getWalletsByUserId);
 router.route('/api/verify-payment').get(verifyPayment);
+router.route('/api/payment/banks').get(GetAllBanks);
 
 
 

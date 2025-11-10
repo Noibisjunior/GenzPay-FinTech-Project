@@ -40,4 +40,46 @@ const handleDepositWebhook = async (req, res) => {
   }
 };  
 
+exports.handleFlutterwaveWebhook = async (req, res) => {
+  try {
+    const secretHash = process.env.FLW_WEBHOOK_SECRET; 
+    const signature = req.headers["verif-hash"];
+
+    // Validate Flutterwave signature 
+    if (!signature || signature !== secretHash) {
+      return res.status(401).json({ message: "Invalid signature" });
+    }
+
+    const event = req.body;
+    console.log("Flutterwave Webhook Event:", event);
+
+    // Only process transfer events
+    if (event.event === "transfer.completed") {
+      const { reference, status } = event.data;
+
+      const transaction = await Transaction.findOne({ reference });
+      if (!transaction) return res.status(404).json({ message: "Transaction not found" });
+
+      transaction.status = status;
+      await transaction.save();
+
+      // Update wallet balance if refunding failed transfer
+      if (status === "failed") {
+        const wallet = await Wallet.findOne({ userId: transaction.userId });
+        if (wallet) {
+          wallet.balance += transaction.amount;
+          await wallet.save();
+        }
+      }
+
+      console.log(`Transaction ${reference} updated to ${status}`);
+    }
+
+    res.sendStatus(200); 
+  } catch (error) {
+    console.error("Webhook processing error:", error.message);
+    res.sendStatus(500);
+  }
+};
+
 module.exports = { handleDepositWebhook };

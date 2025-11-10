@@ -59,15 +59,15 @@ onMounted(() => {
   <DashboardLayout title="Wallets">
     <div class="flex flex-col sm:flex-row gap-6">
       <RouterLink to="wallets/send" class="grid place-items-center gap-2 text-primary px-4 py-2.5 border bg-primary/5 rounded-lg hover:bg-primary/10">
-        <span class="flex gap-2 items-center"><SendIcon /><span>fund your wallet</span></span>
+        <span class="flex gap-2 items-center"><SendIcon /><span>Fund Your Wallet</span></span>
       </RouterLink>
 
       <RouterLink to="wallets/convert" class="grid place-items-center gap-2 text-primary px-4 py-2.5 border bg-primary/5 rounded-lg hover:bg-primary/10">
         <span class="flex gap-2 items-center"><ConvertIcon /><span>Convert Funds</span></span>
       </RouterLink>
 
-      <RouterLink to="wallets/withdraw" class="grid place-items-center gap-2 text-primary px-4 py-2.5 border bg-primary/5 rounded-lg hover:bg-primary/10">
-        <span class="flex gap-2 items-center"><WalletsWhiteIcon /><span>withdraw funds</span></span>
+      <RouterLink to="wallets/transactions" class="grid place-items-center gap-2 text-primary px-4 py-2.5 border bg-primary/5 rounded-lg hover:bg-primary/10">
+        <span class="flex gap-2 items-center"><WalletsWhiteIcon /><span>Transaction History</span></span>
       </RouterLink>
       </div>
 
