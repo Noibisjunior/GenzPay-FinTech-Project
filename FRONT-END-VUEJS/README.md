@@ -1,9 +1,108 @@
-# Vue 3 + TypeScript + Vite
+# FinPay: A Modern Financial Application 
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-## Recommended Setup
+FinPay is a sleek, responsive, and feature-rich frontend for a modern FinTech platform. Built with a powerful Vue.js 3 stack, it provides a seamless user experience for managing digital wallets, creating invoices, handling virtual cards, and tracking transactions. Its component-based architecture and clean UI are designed to deliver performance and scalability.
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+## Features
 
-- Use [vue-tsc](https://github.com/vuejs/language-tools/tree/master/packages/tsc) for performing the same type checking from the command line, or for generating d.ts files for SFCs.
+-   **Secure Authentication**: Robust user registration, login, and password management flows.
+-   **Dashboard Overview**: A central hub to view wallet balances, quick actions, and recent activity.
+-   **Wallet Management**: Functionality to send money, convert funds between currencies, and view balances.
+-   **Invoice System**: Create, view, and manage professional invoices with status tracking (Draft, Pending, Due, Overdue).
+-   **Virtual Card Management**: Create and manage virtual cards for secure online payments.
+-   **Transaction History**: A detailed and searchable log of all financial activities.
+-   **Profile Management**: Users can view and update their personal information, security settings, and identification status.
+-   **Responsive UI**: A beautiful and intuitive interface built with shadcn-vue and Tailwind CSS that works flawlessly on all devices.
+
+## Getting Started
+
+Follow these instructions to get the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+-   [Node.js](https://nodejs.org/en/) (v18 or later)
+-   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+### Installation
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/Noibisjunior/GenzPay-FinTech-Project.git
+    ```
+
+2.  **Navigate to the Project Directory**:
+    ```bash
+    cd front-end-vuejs
+    ```
+
+3.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+
+4.  **Set Up Environment Variables**:
+    Create a `.env` file in the root of the project and add the backend API URL. The application is configured to connect to `http://localhost:8009` by default.
+
+    ```env
+    VITE_API_BASE_URL=http://localhost:8009
+    ```
+
+5.  **Run the Development Server**:
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173`.
+
+## Usage
+
+After starting the development server, you can begin using the application:
+
+-   **Registration**: Navigate to `/signup` to create a new user account. The system requires details like name, email, and a secure password.
+-   **Login**: Access the login page at `/` to sign in with your credentials.
+-   **Dashboard**: Upon successful login, you will be redirected to `/dashboard`, which serves as the main hub for all financial activities.
+-   **Navigation**: Use the sidebar to navigate between different sections like Wallets, Invoices, Cards, and Transactions.
+
+## Technologies Used
+
+This project is built with a modern and robust technology stack:
+
+| Technology         | Description                                        |
+| ------------------ | -------------------------------------------------- |
+| **Vue.js 3**       | A progressive JavaScript framework for building UIs. |
+| **Vite**           | A next-generation frontend tooling for fast builds.  |
+| **TypeScript**     | A typed superset of JavaScript for enhanced safety.  |
+| **Tailwind CSS**   | A utility-first CSS framework for rapid UI design.   |
+| **Vue Router**     | The official router for Vue.js applications.       |
+| **shadcn-vue**     | Re-usable components built with Radix Vue and Tailwind. |
+| **VeeValidate/Zod**| Form validation library integrated with Zod schemas. |
+| **Axios**          | A promise-based HTTP client for making API requests. |
+
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1.  **Fork the Project**
+2.  **Create your Feature Branch** (`git checkout -b feature/AmazingFeature`)
+3.  **Commit your Changes** (`git commit -m 'Add some AmazingFeature'`)
+4.  **Push to the Branch** (`git push origin feature/AmazingFeature`)
+5.  **Open a Pull Request**
+
+## License
+
+This project is open-source. Feel free to use and modify it.
+
+## Author
+
+**Noibisjunior**
+
+-   **GitHub**: [@Noibisjunior](https://github.com/Noibisjunior)
+-   **Twitter**: [@ClericCoder](https://x.com/clericcoder)
+-   **LinkedIn**: [Abdulsalaam-noibi](https://linkedin.com/in/abdulsalaam-noibi)
+
+<br/>
+
+[![Readme was generated by Dokugen](https://img.shields.io/badge/Readme%20was%20generated%20by-Dokugen-brightgreen)](https://www.npmjs.com/package/dokugen)
