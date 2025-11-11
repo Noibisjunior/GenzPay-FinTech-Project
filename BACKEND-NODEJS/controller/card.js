@@ -79,7 +79,7 @@ const getAllCards = async (req, res) => {
       status: card.status,
       date: card.createdAt 
     }));
-console.log(formattedCards)
+
     return res.status(201).json({
       status: 201,
       message: 'Retrieved all paginated cards successfully',
