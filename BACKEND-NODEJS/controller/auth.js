@@ -240,6 +240,15 @@ async function forgotPassword(req, res) {
         });
     };
 
+  async function me(req, res) {
+    try {
+    const user = await Auth.findById(req.user.id).select('username email accountType');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+  }
     async function logOut(req, res) {
         // Clear the token cookie by setting it to expire in the past
         res.cookie('token', '', {
@@ -253,4 +262,4 @@ async function forgotPassword(req, res) {
     
 
     
-module.exports = { register,login,forgotPassword,resetPassword,logOut };
+module.exports = { register,login,forgotPassword,resetPassword,logOut, me };

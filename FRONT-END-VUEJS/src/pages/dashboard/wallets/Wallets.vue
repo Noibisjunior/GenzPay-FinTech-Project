@@ -11,7 +11,7 @@ import axios from "axios";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-
+ 
 interface Wallet {
   _id: string;
   userId: string;
@@ -48,7 +48,7 @@ const fetchWallets = async () => {
   } finally {
     isLoading.value = false;
   }
-};
+}; 
 
 onMounted(() => {
   fetchWallets();

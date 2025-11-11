@@ -1,170 +1,280 @@
 <script lang="ts" setup>
 import Card from "@/components/Card.vue";
 import DashboardLayout from "../layout/DashboardLayout.vue";
-import { h } from 'vue'
-import { useForm } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
-import * as z from 'zod'
-
+import { h, onMounted, ref } from "vue";
+import axios from "axios";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import * as z from "zod";
+import { toast } from "@/components/ui/toast/use-toast";
+import router from "@/router";
+import { ChevronLeftIcon } from "@radix-icons/vue";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { toast } from '@/components/ui/toast/use-toast'
-import router from "@/router";
-import { ChevronLeftIcon } from "@radix-icons/vue";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-const formSchema = toTypedSchema(z.object({
-  firstName: z.string().min(2).max(50),
-  lastName: z.string().min(2).max(50),
-  email: z.string().email().max(50),
-  phone: z.string().max(50),
-  tag: z.string().max(50),
-  country: z.string().max(50),
-  dob: z.string().max(50),
-  occupation: z.string().max(50),
-  physicalAddress: z.string().max(50),
-}))
+const apiBase = "http://localhost:8009/api";
 
-const { isFieldDirty, handleSubmit } = useForm({
-  validationSchema: formSchema,
-})
 
-const onSubmit = handleSubmit((values) => {
-  toast({
-    title: 'You submitted the following values:',
-    description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
+const formSchema = toTypedSchema(
+  z.object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    email: z.string().email(),
+    phone: z.string().optional(),
+    tag: z.string().optional(),
+    country: z.string().optional(),
+    dob: z.string().optional(),
+    occupation: z.string().optional(),
+    physicalAddress: z.string().optional(),
   })
-})
+);
+
+
+const { handleSubmit, setValues, isSubmitting } = useForm({
+  validationSchema: formSchema,
+});
+
+
+const user = ref<any>(null);
+const loading = ref(true);
+const error = ref<string | null>(null);
+
+
+const fetchUser = async () => {
+  try {
+    loading.value = true;
+    const response = await axios.get(`${apiBase}/auth/me`, {
+      withCredentials: true,
+    });
+    user.value = response.data.user;
+
+
+    setValues({
+      firstName: user.value.firstName || "",
+      lastName: user.value.lastName || "",
+      email: user.value.email || "",
+      phone: user.value.phone || "",
+      tag: user.value.tag || "",
+      country: user.value.country || "",
+      dob: user.value.dob || "",
+      occupation: user.value.occupation || "",
+      physicalAddress: user.value.physicalAddress || "",
+    });
+  } catch (err: any) {
+    console.error("Error fetching user:", err);
+    error.value =
+      err.response?.data?.message || "Unable to load profile information.";
+  } finally {
+    loading.value = false;
+  }
+};
+
+
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    toast({
+      title: "Profile Saved!",
+      description: h(
+        "pre",
+        { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
+        h("code", { class: "text-white" }, JSON.stringify(values, null, 2))
+      ),
+    });
+  } catch (err: any) {
+    toast({
+      title: "Error updating profile",
+      description: err.response?.data?.message || err.message,
+    });
+  }
+});
 
 const goBack = () => {
-  router && router.go(-1)
-}
+  router.go(-1);
+};
 
-
-
+onMounted(fetchUser);
 </script>
+
 <template>
-  <DashboardLayout
-    title="Profile"
-    :is-profile="true"
-  >
+  <DashboardLayout title="Profile" :is-profile="true">
     <div class="pb-14">
       <Card title="My Profile">
         <div class="flex flex-col gap-8 px-8 pb-10 pt-8">
-          <div class="flex items-center gap-4 text-[32px]">
-            <div class="w-[72px] aspect-square grid place-items-center rounded-lg text-primary font-semibold bg-primary/5">
-              OR
-            </div>
-            <p class="font-medium">Olivia Rhye</p>
+          <!-- Loading State -->
+          <div v-if="loading" class="text-center py-8 text-muted-foreground">
+            Loading your profile...
           </div>
-          <div class="h-[1px] bg-border text-border" />
-          <form class="grid drid sm:grid-cols-2 grid-flow-row-dense gap-x-16 gap-y-10" @submit="onSubmit">
-              <FormField v-slot="{ componentField }" name="firstName" :validate-on-blur="!isFieldDirty">
+
+          <!-- Error State -->
+          <div
+            v-else-if="error"
+            class="text-center text-red-500 py-8 font-medium"
+          >
+            {{ error }}
+          </div>
+
+          <!-- Profile Info -->
+          <div v-else>
+            <div class="flex items-center gap-4 text-[32px]">
+              <div
+                class="w-[72px] aspect-square grid place-items-center rounded-lg text-primary font-semibold bg-primary/5"
+              >
+                {{ user?.firstName?.[0] || "U" }}{{ user?.lastName?.[0] || "" }}
+              </div>
+              <p class="font-medium text-xl">
+                {{ user?.firstName }} {{ user?.lastName }}
+              </p>
+            </div>
+            <div class="h-[1px] bg-border text-border my-4" />
+
+            <form
+              class="grid sm:grid-cols-2 gap-x-16 gap-y-10"
+              @submit.prevent="onSubmit"
+            >
+              <FormField v-slot="{ componentField }" name="firstName">
                 <FormItem>
-                  <FormLabel>First Name*</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="shadcn" v-bind="componentField" />
+                    <Input type="text" placeholder="John" v-bind="componentField" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="lastName" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="lastName">
                 <FormItem>
-                  <FormLabel>Last Name*</FormLabel>
+                  <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="shadcn" v-bind="componentField" />
+                    <Input type="text" placeholder="Doe" v-bind="componentField" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="email" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="email">
                 <FormItem>
-                  <FormLabel>Email*</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="me@shadcn.vue" v-bind="componentField" />
+                    <Input
+                      type="email"
+                      placeholder="you@example.com"
+                      v-bind="componentField"
+                      disabled
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="phone" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="phone">
                 <FormItem>
-                  <FormLabel>Phone*</FormLabel>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="+234 902 922 0646" v-bind="componentField" />
+                    <Input
+                      type="text"
+                      placeholder="+234 902 922 0646"
+                      v-bind="componentField"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="tag" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="tag">
                 <FormItem>
-                  <FormLabel>FinPay Tag*</FormLabel>
+                  <FormLabel>FinPay Tag</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="m293je90" v-bind="componentField" />
+                    <Input
+                      type="text"
+                      placeholder="m293je90"
+                      v-bind="componentField"
+                      disabled
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="country" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="country">
                 <FormItem>
-                  <FormLabel>Country*</FormLabel>
+                  <FormLabel>Country</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Nigeria" v-bind="componentField" />
+                    <Input
+                      type="text"
+                      placeholder="Nigeria"
+                      v-bind="componentField"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="dob" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="dob">
                 <FormItem>
                   <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="1999-03-12" v-bind="componentField" />
+                    <Input
+                      type="date"
+                      v-bind="componentField"
+                      :value="user?.dob"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="occupation" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="occupation">
                 <FormItem>
-                  <FormLabel>Occupation*</FormLabel>
+                  <FormLabel>Occupation</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Tech Expert" v-bind="componentField" />
+                    <Input
+                      type="text"
+                      placeholder="Tech Expert"
+                      v-bind="componentField"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="physicalAddress" :validate-on-blur="!isFieldDirty">
+
+              <FormField v-slot="{ componentField }" name="physicalAddress">
                 <FormItem>
-                  <FormLabel>Physical Address*</FormLabel>
-                  <!-- <FormControl>
-                    <Input type="text" placeholder="24, Tech Expert" v-bind="componentField" />
-                  </FormControl> -->
+                  <FormLabel>Physical Address</FormLabel>
                   <FormControl>
                     <div class="relative w-full items-center">
-                    <Input type="text" placeholder="24, Tech Expert" v-bind="componentField" class="pr-10" />
-                    <span class="absolute end-0 inset-y-0 border-l text-primary my-2 flex items-center justify-center px-4 mr-0.5">
-                      <div>Edit</div>
-                    </span></div>
+                      <Input
+                        type="text"
+                        placeholder="24, Tech Expert Avenue"
+                        v-bind="componentField"
+                        class="pr-10"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <!-- <span>
-              <Button type="submit" class="w-full mt-8">
-                Submit
-              </Button></span> -->
+
+              <div class="col-span-2 flex justify-end">
+                <Button type="submit" :disabled="isSubmitting" class="px-10">
+                  Save Changes
+                </Button>
+              </div>
             </form>
+          </div>
         </div>
       </Card>
+
       <button @click="goBack" class="flex gap-2 items-center mt-10">
         <ChevronLeftIcon class="size-6" />
         Go back
       </button>
-
     </div>
-    
   </DashboardLayout>
 </template>

@@ -65,6 +65,7 @@ const profileLinks = {
   identification: '/dashboard/profile/identification',
 }
 
+
 </script>
 <template>
   <main class="flex bg-background place-items-center">
@@ -93,10 +94,7 @@ const profileLinks = {
             src="https://cdn-icons-png.flaticon.com/512/149/149071.png" 
           />
           <div class="flex flex-col text-left">
-            <p class="font-semibold">Olivia Rhye </p>
-            <span class="max-w-80 text-xs">
-              olivia@untitledui.com
-            </span>
+            <p class="font-semibold">Profile</p>
           </div>
           <DownloadIcon class="size-6 ml-auto self-start -rotate-90" />
         </RouterLink>

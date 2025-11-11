@@ -5,8 +5,9 @@ const { login,
         register, 
         forgotPassword,
         resetPassword,
-        logOut } = require('../controller/auth.js');
+        logOut} = require('../controller/auth.js');
         
+const {me} = require('../controller/auth.js');
 const {getUserAccounts} = require('../controller/accountController.js')
 const {getInvoiceSummary} = require('../controller/invoiceController.js')
 const {getCurrentExchangeRates} = require('../controller/ExchangeRateController.js')
@@ -54,6 +55,7 @@ const {GetAllBanks} = require("../controller/withdrawFunds.js");
 
 
 
+
 // Creating POST routes 
 router.route('/api/auth/register').post(register);
 router.route('/api/auth/login').post(login);
@@ -74,10 +76,11 @@ router.route('/api/payment/withdraw').post(verifyToken,sendToBank);
 
 
 // Creating GET routes
+router.route('/api/auth/me').get(verifyToken, me)
 router.route('/api/balance').get(verifyToken,CreateWallet);
 router.route('/api/accounts').get(verifyToken,getUserAccounts);
 router.route('/api/invoices/summary').get(verifyToken,getInvoiceSummary);
-router.route('/api/rates').get(getCurrentExchangeRates);
+router.route('/api/exchange-rates').get(getCurrentExchangeRates);
 router.route('/api/cards').get(verifyToken,getActiveVirtualCard );
 router.route('/api/accounts/:id').get(getAccountById);
 router.route('/api/getAllInvoices').get(verifyToken,getAllInvoices);
@@ -104,6 +107,8 @@ router.route('/api/verify-otp').get(verifyOTP);
 router.route('api/wallets/:userId').get(getWalletsByUserId);
 router.route('/api/verify-payment').get(verifyPayment);
 router.route('/api/payment/banks').get(GetAllBanks);
+
+
 
 
 

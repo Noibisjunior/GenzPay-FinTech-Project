@@ -50,8 +50,6 @@ const createAccount = async () => {
   }
 };
 
-
-
 </script>
 
 
@@ -68,7 +66,7 @@ const createAccount = async () => {
       </div>
       <div class="grid gap-2">
         <Label for="last-name">Last Name*</Label>
-        <Input id="last-name"  v-model="firstName" type="text" placeholder="Enter your last name" required />
+        <Input id="last-name"  v-model="lastName" type="text" placeholder="Enter your last name" required />
       </div>
       <div class="grid gap-2">
         <Label for="email">Email*</Label>
