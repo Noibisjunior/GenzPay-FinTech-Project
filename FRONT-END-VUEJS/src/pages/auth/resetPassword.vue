@@ -40,6 +40,8 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const route = useRoute()
 const router = useRouter()
 
@@ -62,7 +64,7 @@ const handleResetPassword = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post(`http://localhost:8009/api/auth/reset-password/${token}`, {
+    const response = await axios.post(`${apiBase}/api/auth/reset-password/${token}`, {
       password: password.value,
       confirmPassword: confirmPassword.value,
     })

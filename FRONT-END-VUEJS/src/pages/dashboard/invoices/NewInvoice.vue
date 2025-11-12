@@ -55,6 +55,8 @@
 <script>
 import axios from 'axios'
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 export default {
   data() {
     return {
@@ -79,7 +81,7 @@ export default {
     async submitInvoice() {
       try {
         const response = await axios.post(
-          'http://localhost:8009/api/userInvoices',
+          `${apiBase}/api/userInvoices`,
           this.form,
           {
             headers: { 'Content-Type': 'application/json' },

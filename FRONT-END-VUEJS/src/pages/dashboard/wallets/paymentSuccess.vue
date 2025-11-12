@@ -3,6 +3,8 @@ import DashboardLayout from "../layout/DashboardLayout.vue";
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const loading = ref(true)
 const verified = ref(false)
 const message = ref('')
@@ -20,7 +22,7 @@ onMounted(async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:8009/api/verify-payment?reference=${reference.value}`)
+    const res = await fetch(`${apiBase}/api/verify-payment?reference=${reference.value}`)
     const data = await res.json()
 
     if (data.success) {

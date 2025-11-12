@@ -28,6 +28,8 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const email = ref('')
 const message = ref('')
 const isSuccess = ref(false)
@@ -38,7 +40,7 @@ const handleForgotPassword = async () => {
   message.value = ''
 
   try {
-    const response = await axios.post('http://localhost:8009/api/auth/forgot-password', { email: email.value })
+    const response = await axios.post(`${apiBase}/api/auth/forgot-password`, { email: email.value })
     message.value = response.data.message
     isSuccess.value = true
   } catch (error) {

@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import axios from 'axios'
 import router from '@/router'
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const email = ref('')
 const otp = ref('')
 const message = ref('')
@@ -11,7 +13,7 @@ const isResending = ref(false)
 
 const verifyCode = async () => {
   try {
-    const response = await axios.get(`http://localhost:8009/api/verify-otp`, {
+    const response = await axios.get(`${apiBase}/api/verify-otp`, {
       params: { email: email.value, otp: otp.value }
     })
     message.value = response.data.message
@@ -31,7 +33,7 @@ const resendOtp = async () => {
   resendMessage.value = ''
 
   try {
-    const response = await axios.post(`http://localhost:8009/api/resend-otp`, {
+    const response = await axios.post(`${apiBase}/api/resend-otp`, {
       email: email.value
     })
     resendMessage.value = response.data.message || 'OTP resent successfully'

@@ -8,6 +8,8 @@ import Card from "@/components/Card.vue";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-icons/vue";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 // States
 const transactions = ref<any[]>([]);
 const loading = ref(true);
@@ -31,7 +33,7 @@ const fetchTransactions = async () => {
       status: selectedStatus.value,
     });
 
-    const res = await fetch(`http://localhost:8009/api/transactions?${params}`, {
+    const res = await fetch(`${apiBase}/api/transactions?${params}`, {
       method: "GET",
       credentials: "include", 
       headers: {

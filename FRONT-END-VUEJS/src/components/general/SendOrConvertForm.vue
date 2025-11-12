@@ -8,6 +8,8 @@ import {
 } from '@/components/ui/select'
 import axios from 'axios'
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const props = defineProps({
   originLabel: String,
   destinationLabel: String,
@@ -29,7 +31,7 @@ const loadingRates = ref(false)
 const fetchRates = async () => {
   try {
     loadingRates.value = true
-    const res = await axios.get('http://localhost:8009/api/exchange-rates', { withCredentials: true })
+    const res = await axios.get(`${apiBase}/api/exchange-rates`, { withCredentials: true })
     rates.value = res.data.data.rates
   } catch (err: any) {
     console.error('Error fetching rates:', err.message)

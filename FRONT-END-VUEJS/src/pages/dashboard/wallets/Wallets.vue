@@ -10,6 +10,8 @@ import { ref, onMounted} from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const route = useRoute();
  
 interface Wallet {
@@ -40,7 +42,7 @@ const fetchWallets = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await axios.get('http://localhost:8009/api/balance',{ withCredentials: true });
+    const response = await axios.get(`${apiBase}/api/balance`,{ withCredentials: true });
     wallets.value = [response.data.data];
   } catch (err: any) {
     console.error("Error fetching wallets:", err);

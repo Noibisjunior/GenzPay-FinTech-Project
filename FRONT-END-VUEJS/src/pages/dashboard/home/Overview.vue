@@ -26,7 +26,7 @@ const isLoading = ref(true);
 const error = ref<string | null>(null);
 const exchangeRates = shallowRef([]);
 
-const apiBase = "http://localhost:8009/api";
+const apiBase = import.meta.env.VITE_API_BASE_URL;
 
 const fetchDashboardData = async () => {
   isLoading.value = true;

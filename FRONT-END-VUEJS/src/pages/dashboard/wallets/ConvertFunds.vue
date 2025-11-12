@@ -7,6 +7,8 @@ import SuccessOrFail from "@/components/general/SuccessOrFail.vue";
 import { ChevronLeftIcon } from "@radix-icons/vue";
 import axios from "axios";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const step = ref(1);
 const amountToConvert = ref<number | null>(null);
 const selectedCurrency = ref("USD");
@@ -19,7 +21,7 @@ const loadingRates = ref(false);
 const fetchRates = async () => {
   try {
     loadingRates.value = true;
-    const res = await axios.get("http://localhost:8009/api/exchange-rates", { withCredentials: true });
+    const res = await axios.get(`${apiBase}/api/exchange-rates`, { withCredentials: true });
     exchangeRates.value = res.data.data.rates;
   } catch (err: any) {
     console.error("Error fetching exchange rates:", err.message);

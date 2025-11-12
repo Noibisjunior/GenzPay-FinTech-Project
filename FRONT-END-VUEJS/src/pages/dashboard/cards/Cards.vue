@@ -17,6 +17,8 @@ import {
 } from '@/components/ui/select'
 import { ArrowRightIcon } from "@radix-icons/vue";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 interface Card {
   reference: string
   type: string
@@ -47,7 +49,7 @@ const error = ref<string | null>(null)
 const fetchCards = async () => {
   try {
     isLoading.value = true
-    const response = await axios.get('http://localhost:8009/api/getAllCards', { withCredentials: true })
+    const response = await axios.get(`${apiBase}/api/getAllCards`, { withCredentials: true })
     cardsList.value = response.data.data
     console.log(cardsList.value)
 
@@ -62,7 +64,7 @@ const createCard = async () => {
   try {
     isLoading.value = true
     await axios.post(
-      'http://localhost:8009/api/createCard',
+      `${apiBase}/api/createCard`,
       {
         name: cardDetails.value.name,
         type: cardDetails.value.type,
@@ -84,7 +86,7 @@ const createCard = async () => {
 const deleteCard = async (cardId: string) => {
   if (confirm('Are you sure you want to delete this card?')) {
     try {
-      await axios.delete(`http://localhost:8009/api/card/${cardId}`, { withCredentials: true });
+      await axios.delete(`${apiBase}/api/card/${cardId}`, { withCredentials: true });
           cardsList.value = cardsList.value.filter(card => card._id !== cardId);
     } catch (error) {
       console.error('Error deleting card:', error);

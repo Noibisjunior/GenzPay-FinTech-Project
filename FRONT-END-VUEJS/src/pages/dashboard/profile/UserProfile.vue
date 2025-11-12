@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const apiBase = "http://localhost:8009/api";
+const apiBase = import.meta.env.VITE_API_BASE_URL;
 
 
 const formSchema = toTypedSchema(

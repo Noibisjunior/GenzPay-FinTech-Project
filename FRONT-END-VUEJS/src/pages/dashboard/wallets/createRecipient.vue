@@ -14,6 +14,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const recipient = ref({
   currency: "",
   type: "",
@@ -27,7 +29,7 @@ const createRecipient = async () => {
   if (!allFilled) return alert("Please fill out all fields");
 
   try {
-    const response = await axios.post("http://localhost:8009/api/recipients", {
+    const response = await axios.post(`${apiBase}/api/recipients`, {
       userId: "user_001",
       ...recipient.value,
     });

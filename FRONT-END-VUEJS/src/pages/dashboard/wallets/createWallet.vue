@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const currency = ref("");
 
 const createWallet = async () => {
   if (!currency.value) return alert("Please enter a currency");
 
   try {
-    const response = await axios.post("http://localhost:8009/api/wallets", {
+    const response = await axios.post(`${apiBase}/api/wallets`, {
       userId: "user_001",
       currency: currency.value,
       balance: 0,

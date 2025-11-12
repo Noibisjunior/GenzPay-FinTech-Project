@@ -8,6 +8,8 @@ import { ArrowRightIcon } from "@radix-icons/vue";
 import { ref } from "vue";
 import axios from "axios";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const loginData = ref({
   email: "",
   password: "",
@@ -22,7 +24,7 @@ const onLogin = async () => {
 
   try {
     await axios.post(
-      "http://localhost:8009/api/auth/login",
+      `${apiBase}/api/auth/login`,
       {
         email: loginData.value.email,
         password: loginData.value.password,

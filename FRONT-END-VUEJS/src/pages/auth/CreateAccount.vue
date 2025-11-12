@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import AuthLayout from "@/pages/auth/layout/AuthLayout.vue";
 import router from "@/router";
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 // Track input values
 const firstName = ref("");
 const lastName = ref("");
@@ -20,7 +22,7 @@ const errorMessage = ref("");
 const createAccount = async () => {
   try {
     const res = await axios.post(
-      "http://localhost:8009/api/auth/register",
+      `${apiBase}/api/auth/register`,
       {
         username: `${firstName.value} ${lastName.value}`,
         email: email.value,

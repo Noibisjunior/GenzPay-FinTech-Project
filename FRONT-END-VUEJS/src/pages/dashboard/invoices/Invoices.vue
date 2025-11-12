@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRightIcon } from '@radix-icons/vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+
 const invoices = ref<any[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
@@ -33,19 +35,19 @@ const fetchInvoices = async (type: string) => {
 
     switch (type) {
       case 'draft':
-        url = 'http://localhost:8009/api/viewDraftInvoices';
+        url = `${apiBase}/api/viewDraftInvoices`;
         break;
       case 'pending':
-        url = 'http://localhost:8009/api/pendingInvoices';
+        url = `${apiBase}/api/pendingInvoices`;
         break;
       case 'due':
-        url = 'http://localhost:8009/api/dueInvoices';
+        url = `${apiBase}/api/dueInvoices`;
         break;
       case 'overdue':
-        url = 'http://localhost:8009/api/overdueInvoices';
+        url = `${apiBase}/api/overdueInvoices`;
         break;
       default:
-        url = 'http://localhost:8009/api/getAllInvoices';
+        url = `${apiBase}/api/getAllInvoices`;
     }
 
     const response = await axios.get(url, { withCredentials: true });
@@ -89,7 +91,7 @@ const deleteInvoice = async (id: string) => {
   if (!confirm("Are you sure you want to delete this invoice?")) return;
 
   try {
-    const response = await axios.delete(`http://localhost:8009/api/invoices/${id}`, {
+    const response = await axios.delete(`${apiBase}/api/invoices/${id}`, {
       withCredentials: true
     });
 

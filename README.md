@@ -1,53 +1,127 @@
-# FinTech-App API
+# GenzPay - Modern FinTech Platform
 
-## Overview
-This is a comprehensive REST API for a modern fintech application, built with Node.js and the Express.js framework. It uses Mongoose as an ODM to interact with a MongoDB database and secures endpoints with JSON Web Tokens (JWT) for authentication.
+![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-## Features
-- **Express.js**: Serves as the web application framework for building the RESTful API.
-- **Mongoose**: Provides an elegant Object Data Modeling (ODM) layer for MongoDB.
-- **JSON Web Token (JWT)**: Used for creating access tokens to secure the API endpoints.
-- **Bcrypt & Argon2**: Implemented for robust and secure password hashing.
-- **Paystack & Flutterwave**: Integrated for handling payment processing, withdrawals, and webhooks.
-- **Nodemailer**: Manages email services for functionalities like OTP verification and password resets.
-- **Axios**: Utilized for making HTTP requests to external services like exchange rate APIs.
+GenzPay is a comprehensive, modern financial technology platform built with a full-stack architecture. It provides users with powerful tools for digital wallet management, invoice creation, virtual card services, and seamless transaction handling. The platform combines a robust Node.js backend with a sleek Vue.js frontend to deliver a professional banking experience.
 
-## Getting Started
+## Architecture Overview
 
-### Installation
+This is a **monorepo** containing two main applications:
 
-1.  **Clone the repository:**
+- **Backend** (`BACKEND-NODEJS/`): RESTful API built with Node.js, Express.js, and MongoDB
+- **Frontend** (`FRONT-END-VUEJS/`): Modern SPA built with Vue.js 3, TypeScript, and Tailwind CSS
+
+## Key Features
+
+### User Experience
+- **Secure Authentication**: JWT-based auth with email verification and password reset
+- **Intuitive Dashboard**: Central hub for financial overview and quick actions
+- **Multi-Currency Support**: Handle USD, NGN, EUR, GBP with real-time exchange rates
+- **Responsive Design**: Flawless experience across desktop, tablet, and mobile devices
+
+### Financial Services
+- **Digital Wallets**: Create, fund, and manage multi-currency wallets
+- **Money Transfers**: Send funds locally with currency conversion
+- **Virtual Cards**: Create and manage secure virtual debit/credit cards
+- **Invoice Management**: Professional invoicing system with status tracking
+- **Transaction History**: Comprehensive, searchable transaction logs
+
+### Security & Integration
+- **Payment Gateways**: Integrated with Paystack and Flutterwave
+- **Email Services**: OTP verification and notifications via Nodemailer
+- **Data Encryption**: Secure card data storage and transmission
+- **API Security**: JWT authentication with protected routes
+
+## Quick Start
+
+### Prerequisites
+
+- **Node.js** (v18 or later)
+- **npm** or **yarn**
+- **MongoDB** (local or Atlas cluster)
+- **Git**
+
+### Installation & Setup
+
+1. **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/FinTech-App.git
-    cd FinTech-App
+    git clone https://github.com/Noibisjunior/GenzPay-FinTech-Project.git
+    cd GenzPay-FinTech-Project
     ```
 
-2.  **Navigate to the backend directory and install dependencies:**
+2. **Backend Setup**:
     ```bash
     cd BACKEND-NODEJS
     npm install
     ```
-
-3.  **Create a `.env` file** in the `BACKEND-NODEJS` root and add the environment variables listed below.
-
-4.  **Start the development server:**
+    
+    Create a `.env` file with the required environment variables (see Backend Configuration below).
+    
     ```bash
     npm run dev
     ```
-    The server will be running on `http://localhost:8009` (or the port specified in your `.env` file).
+    The backend will run on `http://localhost:8009`
+
+3. **Frontend Setup** (in a new terminal):
+    ```bash
+    cd FRONT-END-VUEJS
+    npm install
+    ```
+    
+    The frontend is pre-configured to connect to the production backend. For local development, update the `.env` file:
+    ```env
+    VITE_API_BASE_URL=http://localhost:8009
+    ```
+    
+    ```bash
+    npm run dev
+    ```
+    The frontend will run on `http://localhost:5173`
+
+## Project Structure
+
+```
+GenzPay-FinTech-Project/
+├── BACKEND-NODEJS/           # Node.js API server
+│   ├── controllers/         # Route controllers
+│   ├── middleware/          # Custom middleware
+│   ├── models/              # MongoDB models
+│   ├── routes/              # API routes
+│   ├── utils/               # Utility functions
+│   └── package.json
+├── FRONT-END-VUEJS/         # Vue.js frontend application
+│   ├── src/
+│   │   ├── components/      # Reusable Vue components
+│   │   ├── pages/           # Page components
+│   │   ├── router/          # Vue Router configuration
+│   │   └── main.ts          # Application entry point
+│   ├── public/              # Static assets
+│   └── package.json
+├── README.md                # This file
+└── .gitignore               # Git ignore rules
+```
+
+## Backend Configuration
 
 ### Environment Variables
-Create a `.env` file in the `BACKEND-NODEJS` directory and add the following variables:
+
+Create a `.env` file in the `BACKEND-NODEJS` directory:
 
 ```env
 # Server Configuration
 PORT=8009
+NODE_ENV=development
 
 # MongoDB Connection
-MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/fintech?retryWrites=true&w=majority
+MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/genzpay?retryWrites=true&w=majority
 
 # JWT Authentication
-JWT_SECRET=your_super_secret_jwt_key
+JWT_SECRET=your_super_secret_jwt_key_here
 JWT_EXPIRES=1d
 
 # Email Service (Nodemailer/Gmail)
@@ -59,8 +133,8 @@ SMPT_MAIL=youremail@gmail.com
 SMPT_APP_PASS=your_gmail_app_password
 
 # Payment Gateway Keys
-PAYSTACK_SECRET_KEY=sk_test_...
-FLW_SECRET_KEY=FLWSECK_TEST-...
+PAYSTACK_SECRET_KEY=sk_test_your_paystack_secret_key
+FLW_SECRET_KEY=FLWSECK_TEST_your_flutterwave_secret_key
 FLW_WEBHOOK_SECRET=your_flutterwave_webhook_secret_hash
 
 # External Services
@@ -70,667 +144,189 @@ EXCHANGE_RATE_API_KEY=your_exchangerate_api_key
 CARD_ENCRYPTION_KEY=your_32_character_card_encryption_key
 ```
 
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm start            # Start production server
+npm test             # Run tests
+npm run lint         # Run ESLint
+```
+
+## Frontend Configuration
+
+### Environment Variables
+
+Create a `.env` file in the `FRONT-END-VUEJS` directory:
+
+```env
+# API Configuration
+VITE_API_BASE_URL=https://genzpay-fintech-backend.vercel.app
+```
+
+For local development:
+```env
+VITE_API_BASE_URL=http://localhost:8009
+```
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+```
+
 ## API Documentation
+
 ### Base URL
-`http://localhost:8009`
+- **Development**: `http://localhost:8009`
+- **Production**: `https://genzpay-fintech-backend.vercel.app`
 
-### Endpoints
+### Core Endpoints
 
-#### **Authentication & Users**
+#### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/forgot-password` - Password reset request
+- `GET /api/auth/me` - Get current user profile
+- `GET /api/verify-otp` - Email verification
+- `POST /api/resend-otp` - Resend verification code
 
-#### POST /api/auth/register
-Registers a new user and sends a verification OTP.
-**Request**:
-```json
-{
-  "email": "user@example.com",
-  "username": "newuser",
-  "password": "Password123!",
-  "confirmPassword": "Password123!",
-  "accountType": "savings"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "status": "success",
-  "message": "User registered successfully. An OTP has been sent to your email for verification.",
-  "data": {
-    "token": "eyJhbGciOiJI...",
-    "user": {
-      "email": "user@example.com",
-      "username": "newuser",
-      "accountType": "savings"
-    }
-  }
-}
-```
-**Errors**:
-- `400`: "Please provide all the required information."
-- `400`: "Passwords do not match."
-- `400`: "User with this email or username already exists."
-- `500`: "Registration failed."
+#### Wallets & Transactions
+- `GET /api/balance` - Get wallet balances
+- `POST /api/wallets` - Create new wallet
+- `POST /api/payment/initiate` - Initiate payment
+- `GET /api/verify-payment` - Verify payment
+- `GET /api/transactions` - Get transaction history
+- `GET /api/exchange-rates` - Get exchange rates
 
----
+#### Cards
+- `POST /api/createCard` - Create virtual card
+- `GET /api/getAllCards` - Get user cards
+- `DELETE /api/card/:id` - Delete card
 
-#### POST /api/auth/login
-Authenticates a user and returns a JWT.
-**Request**:
-```json
-{
-  "email": "user@example.com",
-  "password": "Password123!"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Login successful",
-  "data": {
-    "token": "eyJhbGciOiJI...",
-    "user": {
-      "email": "user@example.com",
-      "username": "testuser"
-    }
-  }
-}
-```
-**Errors**:
-- `400`: "Invalid username or password"
-- `500`: "Internal server error"
+#### Invoices
+- `POST /api/userInvoices` - Create invoice
+- `GET /api/getAllInvoices` - Get user invoices
+- `PUT /api/invoices/:id` - Update invoice
+- `DELETE /api/invoices/:id` - Delete invoice
 
----
+For detailed API documentation with request/response examples, see the [Backend API Documentation](./BACKEND-NODEJS/README.md).
 
-#### POST /api/auth/forgot-password
-Sends a password reset link to the user's email.
-**Request**:
-```json
-{
-  "email": "user@example.com"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "message": "Password reset link sent to your email"
-}
-```
-**Errors**:
-- `404`: "No user found with that email"
-- `500`: "Error sending the email. Try again later."
+## Technology Stack Used
 
----
+### Backend Technologies
+| Technology | Description |
+|------------|-------------|
+| **Node.js** | JavaScript runtime for server-side development |
+| **Express.js** | Fast, unopinionated web framework for Node.js |
+| **MongoDB** | NoSQL database for flexible data storage |
+| **Mongoose** | Elegant MongoDB object modeling for Node.js |
+| **JWT** | JSON Web Tokens for secure authentication |
+| **Bcrypt/Argon2** | Password hashing for security |
+| **Paystack/Flutterwave** | Payment processing integrations |
+| **Nodemailer** | Email sending service |
+| **Axios** | HTTP client for external API calls |
 
-#### POST /api/auth/reset-password/:tokens
-Resets the user's password using the provided token.
-**Request**:
-```json
-{
-  "password": "NewPassword123!",
-  "confirmPassword": "NewPassword123!"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Password reset successfully",
-  "data": {
-    "token": "eyJhbGciOiJI...",
-    "user": {
-      "email": "user@example.com",
-      "name": "testuser"
-    }
-  }
-}
-```
-**Errors**:
-- `400`: "Passwords do not match"
-- `400`: "Token is invalid or has expired"
+### Frontend Technologies
+| Technology | Description |
+|------------|-------------|
+| **Vue.js 3** | Progressive JavaScript framework for building UIs |
+| **TypeScript** | Typed JavaScript for enhanced development experience |
+| **Vite** | Fast build tool and development server |
+| **Vue Router** | Official routing library for Vue.js |
+| **Tailwind CSS** | Utility-first CSS framework for rapid styling |
+| **shadcn-vue** | Re-usable components built with Radix Vue |
+| **VeeValidate/Zod** | Form validation with schema-based validation |
+| **Axios** | Promise-based HTTP client for API requests |
 
----
+## Deployment
 
-#### POST /api/auth/logOut
-Logs out the user by clearing the JWT cookie.
-**Request**: (No payload)
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Logout successful"
-}
+### Backend Deployment
+
+The backend is deployed on Vercel and accessible at: `https://genzpay-fintech-backend.vercel.app`
+
+### Frontend Deployment
+
+For production deployment:
+
+1. **Build the application**:
+    ```bash
+    cd FRONT-END-VUEJS
+    npm run build
+    ```
+
+2. **Deploy to Vercel/Netlify**:
+    - Connect your repository to Vercel or Netlify
+    - Set the `VITE_API_BASE_URL` environment variable to the production backend URL
+    - Deploy automatically on push to main branch
+
+## Testing
+
+### Backend Testing
+```bash
+cd BACKEND-NODEJS
+npm test                # Run all tests
+npm run test:watch      # Run tests in watch mode
+npm run test:coverage   # Generate coverage report
 ```
 
----
-
-#### GET /api/auth/me
-Retrieves the profile of the currently authenticated user. (Requires authentication)
-**Request**: (No payload)
-**Response** (Success 200):
-```json
-{
-  "success": true,
-  "user": {
-    "_id": "60d0fe4f5311236168a109ca",
-    "username": "testuser",
-    "email": "user@example.com",
-    "accountType": "savings"
-  }
-}
+### Frontend Testing
+```bash
+cd FRONT-END-VUEJS
+npm run test           # Run unit tests
+npm run test:e2e       # Run end-to-end tests
+npm run test:coverage  # Generate coverage report
 ```
-**Errors**:
-- `401`: "Invalid Token"
-- `404`: "User not found"
-- `500`: "Server error"
 
----
+## Contributing
 
-#### GET /api/verify-otp
-Verifies the user's account using an OTP sent to their email.
-**Request**: Query parameters `?email=user@example.com&otp=123456`
-**Response** (Success 200):
-```json
-{
-  "success": true,
-  "message": "OTP verified successfully. Your account is now active.",
-  "user": {
-    "email": "user@example.com",
-    "username": "newuser",
-    "isVerified": true
-  }
-}
-```
-**Errors**:
-- `400`: "Invalid or expired OTP"
-- `404`: "User not found"
+We welcome contributions to the GenzPay platform! Here's how you can contribute:
 
----
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit your changes**: `git commit -m 'Add amazing feature'`
+4. **Push to the branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
 
-#### POST /api/resend-otp
-Resends a new OTP to the user's email.
-**Request**:
-```json
-{
-  "email": "user@example.com"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "message": "OTP has been resent to your email"
-}
-```
-**Errors**:
-- `400`: "Email is required"
-- `404`: "User not found"
-
----
-#### **Accounts & Wallets**
-
-#### GET /api/accounts
-Retrieves all bank accounts for the authenticated user. (Requires authentication)
-**Request**: (No payload)
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "All balances retrieved successfully",
-  "data": {
-    "accounts": [
-      {
-        "currency": "USD",
-        "accountHolder": "Default User",
-        "bankName": "Dummy Bank",
-        "accountNumber": "1234567890",
-        "routingNumber": "0987654321",
-        "accountType": "Checking",
-        "address": "1234 Default Street, Default City, 00000, USA"
-      }
-    ]
-  }
-}
-```
-**Errors**:
-- `500`: "Server error"
-
----
-
-#### GET /api/wallets/balance
-Retrieves the current balance for a specific currency wallet. (Requires authentication)
-**Request**: Query parameter `?currency=USD`
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Balance retrieved successfully",
-  "data": {
-    "balance": "500",
-    "currency": "USD"
-  }
-}
-```
-**Errors**:
-- `400`: "Currency query parameter is required"
-- `404`: "No balance found for currency: [currency]"
-- `500`: "Server error"
-
----
-
-#### POST /api/wallets/send
-Sends money from a user's wallet to a specified account. (Requires authentication)
-**Request**:
-```json
-{
-  "amount": 100,
-  "accountType": "bank",
-  "accountID": "1234567890",
-  "currency": "USD",
-  "receivingCurrency": "NGN",
-  "description": "Payment for services",
-  "agentPhoneNumber": "+1234567890"
-}
-```
-**Response** (Success 201):
-```json
-{
-  "status": 201,
-  "message": "You have successfully sent your fund",
-  "data": {
-    "id": "60d0fe4f5311236168a109cc",
-    "transactionDate": "2023-10-27T10:00:00.000Z",
-    "userId": "60d0fe4f5311236168a109ca",
-    "amountReceived": 150000,
-    "receivingCurrency": "NGN",
-    "amount": 100,
-    "description": "Payment for services",
-    "accountType": "bank",
-    "accountID": "1234567890"
-  }
-}
-```
-**Errors**:
-- `400`: "Missing required fields"
-- `400`: "Insufficient funds"
-- `400`: "Unsupported currency conversion"
-- `500`: "Server error"
-
----
-
-#### POST /api/wallets/convert
-Converts an amount from one currency to another (simulated). (Requires authentication)
-**Request**:
-```json
-{
-  "amount": 100,
-  "currency": "NGN"
-}
-```
-**Response** (Success 201):
-```json
-{
-  "status": 201,
-  "message": "You have successfully converted your fund",
-  "data": {
-    "id": "uniqueConversionId",
-    "conversionDate": "2023-10-27T10:00:00.000Z",
-    "currency": "NGN",
-    "amount": 150000
-  }
-}
-```
-**Errors**:
-- `400`: "Amount and target currency are required"
-- `500`: "Server error"
-
----
-
-#### **Transactions & Payments**
-
-#### POST /api/payment/initiate
-Initiates a payment process via Paystack to fund a wallet. (Requires authentication)
-**Request**:
-```json
-{
-  "email": "user@example.com",
-  "amount": 5000,
-  "currency": "NGN",
-  "receivingCurrency": "NGN",
-  "accountID": "123456",
-  "accountType": "wallet",
-  "description": "Fund wallet"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "message": "Payment initiated",
-  "data": {
-    "authorization_url": "https://checkout.paystack.com/...",
-    "reference": "TX-..."
-  }
-}
-```
-**Errors**:
-- `500`: "Could not initiate payment"
-
----
-
-#### GET /api/verify-payment
-Verifies a Paystack payment and credits the user's wallet.
-**Request**: Query parameter `?reference=TX-...`
-**Response** (Success 200):
-```json
-{
-  "success": true,
-  "message": "Payment verified and wallet credited"
-}
-```
-**Errors**:
-- `400`: "Missing payment reference"
-- `400`: "Transaction not successful"
-- `404`: "Transaction not found"
-- `409`: "Transaction already processed"
-- `500`: "Could not verify payment"
-
----
-
-#### POST /api/payment/withdraw
-Initiates a withdrawal to a bank account via Flutterwave. (Requires authentication)
-**Request**:
-```json
-{
-  "amount": 5000,
-  "account_number": "0123456789",
-  "bank_code": "044",
-  "beneficiary_name": "John Doe",
-  "narration": "Wallet withdrawal",
-  "debit_currency": "NGN"
-}
-```
-**Response** (Success 200):
-```json
-{
-  "message": "Transfer simulated successfully (Sandbox Mode)",
-  "data": {
-    "id": 12345,
-    "status": "NEW",
-    "reference": "TX-...",
-    ...
-  }
-}
-```
-**Errors**:
-- `400`: "Missing required fields"
-- `400`: "Insufficient wallet balance"
-- `400`: "Transfer failed"
-- `500`: "Transfer failed"
-
----
-
-#### GET /api/transactions
-Retrieves a paginated list of transactions for the authenticated user. (Requires authentication)
-**Request**: Query parameters `?page=0&size=10&search=...&status=success`
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Transactions fetched successfully",
-  "pagination": {
-    "total": 1,
-    "page": 0,
-    "size": 10,
-    "totalPages": 1,
-    "hasNext": false,
-    "hasPrev": false
-  },
-  "data": [
-    {
-      "id": "60d0fe4f5311236168a109cd",
-      "transactionDate": "2023-10-27T10:00:00.000Z",
-      "userId": "60d0fe4f5311236168a109ca",
-      "amount": 5000,
-      "status": "successful",
-      "type": "credit"
-    }
-  ]
-}
-```
-**Errors**:
-- `500`: "Server error while fetching transactions"
-
----
-
-#### GET /api/transactions/:id
-Retrieves a single transaction by its ID. (Requires authentication)
-**Request**: (No payload)
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Transaction retrieved successfully",
-  "data": {
-    "id": "60d0fe4f5311236168a109cd",
-    "transactionDate": "2023-10-27T10:00:00.000Z",
-    "userId": "60d0fe4f5311236168a109ca",
-    "amount": 5000,
-    "status": "successful",
-    "type": "credit"
-  }
-}
-```
-**Errors**:
-- `404`: "Transaction not found or unauthorized"
-- `500`: "Server error while retrieving transaction"
-
----
-#### **Cards**
-
-#### POST /api/createCard
-Creates a new virtual card for the user. (Requires authentication)
-**Request**:
-```json
-{
-  "name": "My Virtual Card",
-  "type": "Debit",
-  "brand": "Visa"
-}
-```
-**Response** (Success 201):
-```json
-{
-  "status": 201,
-  "message": "Card created successfully",
-  "data": {
-    "reference": "mock_ref_...",
-    "card_reference": "mock_card_ref_...",
-    "type": "Debit",
-    "currency": "USD",
-    "holderName": "My Virtual Card",
-    "brand": "Visa",
-    "expiry_month": "12",
-    "expiry_year": "2028",
-    "first_six": "123456",
-    "last_four": "7890",
-    "status": "active"
-  }
-}
-```
-**Errors**:
-- `500`: "Failed to create card"
-
----
-
-#### GET /api/getAllCards
-Retrieves a paginated list of all cards for the user. (Requires authentication)
-**Request**: Query parameters `?page=0&size=10`
-**Response** (Success 201):
-```json
-{
-  "status": 201,
-  "message": "Retrieved all paginated cards successfully",
-  "data": [
-    {
-      "_id": "60d0fe4f5311236168a109ce",
-      "reference": "mock_ref_...",
-      "type": "Debit",
-      "holderName": "My Card",
-      "brand": "Visa",
-      "status": "active"
-    }
-  ]
-}
-```
-**Errors**:
-- `404`: "No cards found for user"
-- `500`: "Server error"
-
----
-
-#### DELETE /api/card/:id
-Deletes a specific card by its ID. (Requires authentication)
-**Request**: (No payload)
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "card deleted successfully",
-  "data": {}
-}
-```
-**Errors**:
-- `404`: "card not found"
-- `500`: "Server error"
-
----
-#### **Invoices**
-
-#### POST /api/userInvoices
-Creates a new invoice for the authenticated user. (Requires authentication)
-**Request**:
-```json
-{
-  "customer": "Client Name",
-  "items": [
-    {
-      "description": "Web Development",
-      "quantity": 1,
-      "amount": 1500
-    }
-  ],
-  "currency": "USD",
-  "issueDate": "2023-11-01",
-  "dueDate": "2023-11-15",
-  "status": "draft"
-}
-```
-**Response** (Success 201):
-```json
-{
-  "status": 201,
-  "message": "Invoice created successfully",
-  "data": {
-    "shareable": "https://yourdomain.com/invoices/...",
-    "customer": "Client Name",
-    "items": [...],
-    "currency": "USD",
-    "issueDate": "2023-11-01T00:00:00.000Z",
-    "dueDate": "2023-11-15T00:00:00.000Z",
-    "status": "draft"
-  }
-}
-```
-**Errors**:
-- `500`: "Server error"
-
----
-
-#### GET /api/getAllInvoices
-Retrieves all invoices for the user, with optional search and pagination. (Requires authentication)
-**Request**: Query parameters `?page=0&size=10&terms=Client`
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Retrieved all paginated searched invoices successfully",
-  "data": [
-    {
-      "id": "60d0fe4f5311236168a109cf",
-      "shareable": "https://link-to-view-invoice.com/...",
-      "customer": "Client Name",
-      "currency": "USD",
-      "issueDate": "2023-11-01T00:00:00.000Z",
-      "dueDate": "2023-11-15T00:00:00.000Z",
-      "Status": "draft"
-    }
-  ]
-}
-```
-**Errors**:
-- `500`: "Server error"
-
----
-
-#### PUT /api/invoices/:id
-Updates an existing invoice by its ID. (Requires authentication)
-**Request**:
-```json
-{
-  "status": "pending",
-  "amount": 2000
-}
-```
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Invoice updated successfully",
-  "data": { ...updatedInvoiceObject }
-}
-```
-**Errors**:
-- `404`: "Invoice not found"
-- `500`: "Server error"
-
----
-
-#### DELETE /api/invoices/:id
-Deletes an invoice by its ID. (Requires authentication)
-**Request**: (No payload)
-**Response** (Success 200):
-```json
-{
-  "status": 200,
-  "message": "Invoice deleted successfully",
-  "data": {}
-}
-```
-**Errors**:
-- `404`: "Invoice not found"
-- `500`: "Server error"
-
----
-
-#### **Webhooks**
-
-#### POST /api/webhooks/paystack
-Handles incoming webhook events from Paystack to confirm transactions.
-**Request**: (Payload provided by Paystack)
-**Response** (Success 200): (No body, just status code)
-**Errors**:
-- `401`: "Invalid signature"
+### Development Guidelines
+- Follow the existing code style and conventions
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+- Ensure all tests pass before submitting PR
 
 ## License
 
-This project is open-source. Feel free to use and modify it.
+This project is open-source and available under the [MIT License](LICENSE).
 
 ## Author
 
 **Noibisjunior**
 
--   **GitHub**: [@Noibisjunior](https://github.com/Noibisjunior)
--   **Twitter**: [@ClericCoder](https://x.com/clericcoder)
--   **LinkedIn**: [Abdulsalaam-noibi](https://linkedin.com/in/abdulsalaam-noibi)
+- **GitHub**: [@Noibisjunior](https://github.com/Noibisjunior)
+- **Twitter**: [@ClericCoder](https://x.com/clericcoder)
+- **LinkedIn**: [Abdulsalaam-noibi](https://linkedin.com/in/abdulsalaam-noibi)
+
+## Acknowledgments
+
+- Paystack and Flutterwave for payment gateway services
+- Vue.js and Express.js communities for excellent frameworks
+- All contributors who help improve this project
+
+## Support
+
+If you encounter any issues or have questions:
+
+1. Check the [Issues](https://github.com/Noibisjunior/GenzPay-FinTech-Project/issues) page
+2. Create a new issue with detailed information
+
+---
+
+<div align="center">
+  <strong>⭐ Star this repository if it helped you! ⭐</strong>
+</div>
 
 <br/>
 
