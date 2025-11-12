@@ -6,9 +6,6 @@ import {
   ConvertIcon,
   InvoicesIcon,
   InvoicesWhiteIcon,
-  EuroIcon,
-  GbpIcon,
-  UsdIcon,
   CardIcon,
   CardWhiteIcon,
   HomeIcon

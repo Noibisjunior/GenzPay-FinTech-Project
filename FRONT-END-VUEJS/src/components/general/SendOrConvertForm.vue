@@ -20,7 +20,7 @@ const props = defineProps({
 
 const emit = defineEmits(['onSendMoney'])
 
-const amount = ref<number | null>(null)
+const amount = ref<number | string | undefined>(undefined)
 const currency = ref('USD')
 const receivingCurrency = ref('USD')
 const convertedAmount = ref(0)
@@ -47,7 +47,7 @@ const calculateConversion = () => {
     return
   }
   const rate = rates.value.find(r => r.currency === receivingCurrency.value)?.buyPrice || 1
-  convertedAmount.value = parseFloat((amount.value * rate).toFixed(2))
+  convertedAmount.value = parseFloat(((Number(amount.value) || 0) * rate).toFixed(2))
 }
 
 // Watch for changes
