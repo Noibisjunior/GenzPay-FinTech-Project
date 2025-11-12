@@ -325,7 +325,7 @@ If you encounter any issues or have questions:
 ---
 
 <div align="center">
-  <strong>⭐ Star this repository if it helped you! ⭐</strong>
+  <strong>⭐ Please Star this repository if it helped you! ⭐</strong>
 </div>
 
 <br/>

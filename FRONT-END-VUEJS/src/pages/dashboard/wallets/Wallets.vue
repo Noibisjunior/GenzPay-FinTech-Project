@@ -8,11 +8,8 @@ import { Button } from "@/components/ui/button";
 import Card from "@/components/Card.vue";
 import { ref, onMounted} from "vue";
 import axios from "axios";
-import { useRoute } from "vue-router";
 
 const apiBase = import.meta.env.VITE_API_BASE_URL;
-
-const route = useRoute();
  
 interface Wallet {
   _id: string;

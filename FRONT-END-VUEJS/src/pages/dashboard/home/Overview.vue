@@ -24,7 +24,9 @@ const wallets = ref<Wallet[]>([]);
 const username = ref("");
 const isLoading = ref(true);
 const error = ref<string | null>(null);
-const exchangeRates = shallowRef([]);
+const exchangeRates = shallowRef<{
+  icon: any; currency: string; buyPrice: number; sellPrice: number 
+}[]>([]);
 
 const apiBase = import.meta.env.VITE_API_BASE_URL;
 

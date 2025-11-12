@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import Card from "@/components/Card.vue";
 import DashboardLayout from "../layout/DashboardLayout.vue";
 import SendOrConvertForm from "@/components/general/SendOrConvertForm.vue";
@@ -11,7 +11,6 @@ const apiBase = import.meta.env.VITE_API_BASE_URL;
 
 const step = ref(1);
 const amountToConvert = ref<number | null>(null);
-const selectedCurrency = ref("USD");
 const receiveCurrency = ref("EUR");
 const convertedAmount = ref(0);
 const exchangeRates = ref<{ currency: string; buyPrice: number; sellPrice: number }[]>([]);

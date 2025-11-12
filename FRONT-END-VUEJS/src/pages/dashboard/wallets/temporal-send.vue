@@ -1,15 +1,10 @@
-<script lang="ts" setup>
+<!-- <script lang="ts" setup>
 import Card from "@/components/Card.vue";
 import DashboardLayout from "../layout/DashboardLayout.vue";
 import { Button } from "@/components/ui/button";
 import { HomeIcon } from "@/components/icons";
 import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@radix-icons/vue";
 import router from "@/router";
-import axios from "axios";
-import { ref } from "vue";
-import {
-  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
-} from '@/components/ui/select'
 import RightModal from "@/components/all-modals/RightModal.vue";
 import SendOrConvertForm from "@/components/general/SendOrConvertForm.vue";
 import SuccessOrFail from "@/components/general/SuccessOrFail.vue";
@@ -73,8 +68,8 @@ const sendMoney = async () => {
         'Authorization': `Bearer ${yourAuthToken}`
       },
       body: JSON.stringify({
-        email: this.form.email,       // User email
-        amount: this.form.amount,     // Amount to send
+        email: sendData.value.email,       // User email
+        amount: sendData.value.amount,     // Amount to send
         currency: 'NGN'
       })
     });
@@ -101,7 +96,8 @@ const sendMoney = async () => {
         <div class="flex flex-col gap-10 px-8 pb-12 pt-8">
 
           <!-- Step 1 -->
-          <span v-if="sendData.step === 1" class="flex flex-col gap-10">
+          <!-- <div v-if="sendData.step === 1" class="flex flex-col gap-10">
+            <h3 class="text-lg font-semibold mb-4">Select transfer type</h3>
             <button
               v-for="option in ['bank', 'mobile']"
               :key="option"
@@ -118,7 +114,7 @@ const sendMoney = async () => {
             </button>
           </span>
 
-          <!-- Step 2 -->
+          <!-- Step 2 
           <div v-if="sendData.step === 2">
             Choose a recipient*
             <Select v-model="sendData.recipient">
@@ -134,7 +130,7 @@ const sendMoney = async () => {
                           <PlusIcon class="bg-primary text-white rounded-full" />Add new recipient
                         </span>
                       </template>
-                      <!-- New recipient form could go here -->
+                      <!-- New recipient form could go here 
                     </RightModal>
                   </SelectLabel>
                   <SelectItem
@@ -149,7 +145,7 @@ const sendMoney = async () => {
             </Select>
           </div>
 
-          <!-- Step 3 -->
+          <!-- Step 3 
           <SendOrConvertForm
             v-if="sendData.step === 3"
             originLabel="You send"
@@ -160,7 +156,7 @@ const sendMoney = async () => {
             @onSendMoney="sendMoney"
           />
 
-          <!-- Continue Button -->
+           Continue Button 
           <Button
             v-if="sendData.step < 3"
             @click="nextStep"
@@ -185,4 +181,4 @@ const sendMoney = async () => {
       </button>
     </div>
   </DashboardLayout>
-</template>
+</template> -->
