@@ -33,9 +33,9 @@ const fetchDashboardData = async () => {
 
   try {
     const [walletRes, userRes, ratesRes] = await Promise.all([
-      axios.get(`${apiBase}/balance`, { withCredentials: true }),
-      axios.get(`${apiBase}/auth/me`, { withCredentials: true }),
-      axios.get(`${apiBase}/exchange-rates`, { withCredentials: true })
+      axios.get(`${apiBase}/api/balance`, { withCredentials: true }),
+      axios.get(`${apiBase}/api/auth/me`, { withCredentials: true }),
+      axios.get(`${apiBase}/api/exchange-rates`, { withCredentials: true })
     ]);
 
     wallets.value = walletRes.data?.data ? [walletRes.data.data] : [];
