@@ -74,7 +74,7 @@ async function register(req, res) {
     });
 
     // Set cookie with token
-    res.cookie('token', token, { secure: false, httpOnly: true });
+    res.cookie('token', token, { secure: true, httpOnly: true, sameSite: 'none' });
 
     return res.status(200).json({
       status: 'success',
@@ -125,7 +125,7 @@ async function register(req, res) {
     });
 
     // Send token as a cookie
-    res.cookie('token', token, { secure: false, httpOnly: true,sameSite: 'lax' });
+    res.cookie('token', token, { secure: true, httpOnly: true, sameSite: 'none' });
 
     return res.status(200).json({
       status: 200,
@@ -254,7 +254,7 @@ async function forgotPassword(req, res) {
         res.cookie('token', '', {
             expires: new Date(Date.now() - 1000), //  cookie expires immediately
             httpOnly: true, // Prevents JavaScript access to the cookie
-            // secure: process.env.NODE_ENV === 'production', // Only send cookie over HTTPS in production
+             secure: true, // Only send cookie over HTTPS in production
         });
         
         res.status(200).json({ status: 200,message: 'Logout successful' });
