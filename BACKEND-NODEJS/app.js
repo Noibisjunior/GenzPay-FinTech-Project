@@ -10,7 +10,10 @@ const otherRoutes = require('./routes/otherRoute');
 const app = express();
 
 app.use(cors({
-  origin: true,
+  origin: [
+      "http://localhost:5173",
+      "https://genzpay-w86e.onrender.com"
+    ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
