@@ -50,7 +50,7 @@ const error = ref<string | null>(null);
 const fetchUser = async () => {
   try {
     loading.value = true;
-    const response = await axios.get(`${apiBase}/auth/me`, {
+    const response = await axios.get(`${apiBase}/api/auth/me`, {
       withCredentials: true,
     });
     user.value = response.data.user;
