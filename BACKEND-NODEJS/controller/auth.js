@@ -74,7 +74,10 @@ async function register(req, res) {
     });
 
     // Set cookie with token
-    res.cookie('token', token, { secure: true, httpOnly: true, sameSite: 'none' });
+    res.cookie('token', token, { httpOnly: true,
+  secure: true,         
+  sameSite: "none",     
+  maxAge: 24 * 60 * 60 * 1000 });
 
     return res.status(200).json({
       status: 'success',
@@ -125,7 +128,10 @@ async function register(req, res) {
     });
 
     // Send token as a cookie
-    res.cookie('token', token, { secure: true, httpOnly: true, sameSite: 'none' });
+    res.cookie('token', token, { httpOnly: true,
+  secure: true,     
+  sameSite: "none",     
+  maxAge: 24 * 60 * 60 * 1000 });
 
     return res.status(200).json({
       status: 200,
@@ -160,7 +166,7 @@ async function forgotPassword(req, res) {
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false })
     
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;  // check for deployed frontend URL
+    const resetURL = `https://genzpay-w86e.onrender.com/reset-password/${resetToken}`;  // check for deployed frontend URL
 
     console.log('Generated Reset URL:', resetURL);
 
@@ -253,8 +259,10 @@ async function forgotPassword(req, res) {
         // Clear the token cookie by setting it to expire in the past
         res.cookie('token', '', {
             expires: new Date(Date.now() - 1000), //  cookie expires immediately
-            httpOnly: true, // Prevents JavaScript access to the cookie
-             secure: true, // Only send cookie over HTTPS in production
+           httpOnly: true,
+          secure: true,        
+          sameSite: "none",   
+          maxAge: 24 * 60 * 60 * 1000
         });
         
         res.status(200).json({ status: 200,message: 'Logout successful' });
@@ -263,3 +271,14 @@ async function forgotPassword(req, res) {
 
     
 module.exports = { register,login,forgotPassword,resetPassword,logOut, me };
+
+
+// is it possible to get the cookie from this function in production , remember i have alredy logged in "async function me(req, res) { 
+//     try {
+//     const user = await Auth.findById(req.user.id).select('username email accountType');
+//     if (!user) return res.status(404).json({ message: 'User not found' });
+//     res.json({ success: true, user });
+//   } catch (err) {
+//     res.status(500).json({ message: 'Server error', error: err.message });
+//   }
+//   }"

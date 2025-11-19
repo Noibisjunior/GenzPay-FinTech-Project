@@ -114,3 +114,9 @@ router.delete('/notification/:id', verifyToken, deleteNotification);
 
 
 module.exports = router;
+
+// ok good, now i can login to my dashboard(i set origin to true, so no cors error)
+// but i have one problem, "Token is required", this particular error happens when i try to access authenticated route.
+// note: i have done all the necessary requirement from setting {withCredentials:true} to every authenticated route to have the cookie, 
+// setting  secure: true, sameSite: "none" to my res.cookie() and also having cookie-parser before every route.
+// kindly help me out, i really need an effective solution to solve this problem, remeber everything works on my computer but the main problem is on the render cloud
