@@ -1,4 +1,4 @@
-# FinTech-App API
+# FinPay-App API
 
 ## Overview
 This project is a comprehensive FinTech API built with Node.js and Express.js, designed to handle core financial operations including user authentication, wallet management, transactions, and invoicing. It utilizes a MongoDB database via Mongoose for data persistence and secures endpoints with JSON Web Tokens (JWT).
