@@ -18,3 +18,6 @@ const start = async () => {
 };
 
 start();
+
+// Deployment Fun Fact: If you make any code changes in a monorepo that contains both frontend and backend, dont forget to deploy the
+// latest commit on both the frontend and backend server. 

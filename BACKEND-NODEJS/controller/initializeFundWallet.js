@@ -15,7 +15,7 @@ exports.initializeSendMoney = async (req, res) => {
     const response = await paystack.post('/transaction/initialize', {
       email,
       amount: amountInKobo,
-      callback_url: "http://localhost:5173/payment-success",
+      callback_url: "https://genzpay-w86e.onrender.com/payment-success",
       metadata: {
         email,
         userId,
