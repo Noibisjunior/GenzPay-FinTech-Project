@@ -9,6 +9,7 @@ const crypto = require ('crypto')
 const authSchema = mongoose.Schema({
   email: {
     type: String,
+    index: true,
     required: [true, 'Email is required'],
     unique: true,
     validate: [validator.isEmail, 'Please provide a valid email address'],

@@ -7,9 +7,8 @@ const sendEmail = async (options) => {
     secure: false, // Use TLS (not SSL), port 587
     auth: {
       user: process.env.SMPT_MAIL,
-      pass: process.env.SMPT_APP_PASS,
-    },
-  });
+      pass: process.env.SMPT_APP_PASS, 
+  }});
 
   const mailOptions = {
     from: `FintechApp <${process.env.SMPT_MAIL}>`,

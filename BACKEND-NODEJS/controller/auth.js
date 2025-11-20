@@ -21,81 +21,88 @@ async function register(req, res) {
 
   // Validate input
   if (!email || !username || !password || !confirmPassword || !accountType) {
-    return res.status(400).json({ status: 'error', message: 'Please provide all the required information.' });
+    return res.status(400).json({
+      status: 'error',
+      message: 'Please provide all required information.'
+    });
   }
 
   if (password !== confirmPassword) {
-    return res.status(400).json({ status: 'error', message: 'Passwords do not match.' });
+    return res.status(400).json({
+      status: 'error',
+      message: 'Passwords do not match.'
+    });
   }
 
   try {
     // Check if user exists
-    const existingUser = await Auth.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await Auth.findOne({ 
+      $or: [{ email }, { username }] 
+    });
+
     if (existingUser) {
-      return res.status(400).json({ status: 'error', message: 'User with this email or username already exists.' });
+      return res.status(400).json({
+        status: 'error',
+        message: 'User with this email or username already exists.'
+      });
     }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user (initially unverified)
+    // Create new (unverified) user
     const newUser = await Auth.create({
       email: email.trim().toLowerCase(),
       username,
       accountType,
       password: hashedPassword,
-      isVerified: false, // assuming you have this field
+      isVerified: false
     });
 
-    console.log('New user created:', newUser);
+    console.log("New user created:", newUser._id);
 
-    // Generate OTP and save
+    // Generate OTP and store it — no email sending
     const otp = generateOTP();
     await Otps.create({ email, otp });
 
-    // Send verification email with OTP
-    await sendEmail({
-      to: email,
-      subject: 'Verify Your Email',
-      message: `
-        <h3>Welcome, ${username}!</h3>
-        <p>Your OTP for email verification is:</p>
-        <h2 style="color:#6366F1;">${otp}</h2>
-        <p>This OTP is valid for a short time.</p>
-        <br/>
-        <p>Thanks,<br/>The FintechApp Team</p>
-      `,
-    });
-
     // Generate JWT token
-    const token = JWT.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = JWT.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
-    // Set cookie with token
-    res.cookie('token', token, { httpOnly: true,
-  secure: true,         
-  sameSite: "none",     
-  maxAge: 24 * 60 * 60 * 1000 });
+    // Set auth cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000
+    });
 
     return res.status(200).json({
       status: 'success',
-      message: 'User registered successfully. An OTP has been sent to your email for verification.',
+      message: 'User registered successfully. Use the OTP to verify your account.',
       data: {
         token,
         user: {
           email: newUser.email,
           username: newUser.username,
           accountType: newUser.accountType,
-        },
-      },
+        }
+      }
     });
+
   } catch (error) {
-    console.error('Registration error:', error);
-    return res.status(500).json({ status: 'error', message: 'Registration failed.' });
+    console.error("Registration error:", error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Registration failed.'
+    });
   }
 }
+
 
 
 // Login function
@@ -282,3 +289,86 @@ module.exports = { register,login,forgotPassword,resetPassword,logOut, me };
 //     res.status(500).json({ message: 'Server error', error: err.message });
 //   }
 //   }"
+
+
+//works perfectly on localhost, could not work on cloud due to smtp connection: solution use resend custom domain
+// async function register(req, res) {
+//   const { email, username, password, confirmPassword, accountType } = req.body;
+
+//   // Validate input
+//   if (!email || !username || !password || !confirmPassword || !accountType) {
+//     return res.status(400).json({ status: 'error', message: 'Please provide all the required information.' });
+//   }
+
+//   if (password !== confirmPassword) {
+//     return res.status(400).json({ status: 'error', message: 'Passwords do not match.' });
+//   }
+
+//   try {
+//     // Check if user exists
+//     const existingUser = await Auth.findOne({ $or: [{ email }, { username }] });
+//     if (existingUser) {
+//       return res.status(400).json({ status: 'error', message: 'User with this email or username already exists.' });
+//     }
+
+//     // Hash password
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+
+//     // Create new user (initially unverified)
+//     const newUser = await Auth.create({
+//       email: email.trim().toLowerCase(),
+//       username,
+//       accountType,
+//       password: hashedPassword,
+//       isVerified: false, // assuming you have this field
+//     });
+
+//     console.log('New user created:', newUser);
+
+//     // Generate OTP and save
+//     const otp = generateOTP();
+//     await Otps.create({ email, otp });
+
+//     // Send verification email with OTP
+//     await sendEmail({
+//       to: email,
+//       subject: 'Verify Your Email',
+//       message: `
+//         <h3>Welcome, ${username}!</h3>
+//         <p>Your OTP for email verification is:</p>
+//         <h2 style="color:#6366F1;">${otp}</h2>
+//         <p>This OTP is valid for a short time.</p>
+//         <br/>
+//         <p>Thanks,<br/>The FintechApp Team</p>
+//       `,
+//     });
+
+//     // Generate JWT token
+//     const token = JWT.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
+//       expiresIn: '1d',
+//     });
+
+//     // Set cookie with token
+//     res.cookie('token', token, { httpOnly: true,
+//   secure: true,         
+//   sameSite: "none",     
+//   maxAge: 24 * 60 * 60 * 1000 });
+
+//     return res.status(200).json({
+//       status: 'success',
+//       message: 'User registered successfully. An OTP has been sent to your email for verification.',
+//       data: {
+//         token,
+//         user: {
+//           email: newUser.email,
+//           username: newUser.username,
+//           accountType: newUser.accountType,
+//         },
+//       },
+//     });
+//   } catch (error) {
+//     console.error('Registration error:', error);
+//     return res.status(500).json({ status: 'error', message: 'Registration failed.' });
+//   }
+// }
